@@ -78,6 +78,90 @@ const App = () => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  // Function to process message text and wrap "<tool_call>" blocks in collapsible elements
+  const processMessageText = (text) => {
+    // Split the text by "<tool_call>" blocks
+    const parts = text.split(/(\u2694+)/);
+    
+    return parts.map((part, index) => {
+      // If this part is a "<tool_call>" block, wrap it in a collapsible element
+      if (part === '<tool_call>') {
+        return <span key={index} className="thoughts-block"><tool_call></span>;
+      }
+      
+      // If this part contains thoughts content, wrap it appropriately
+      if (part.includes('<tool_call>')) {
+        const thoughtParts = part.split(/(\u2694+)/);
+        return thoughtParts.map((thoughtPart, thoughtIndex) => {
+          if (thoughtPart === '<tool_call>') {
+            return <span key={thoughtIndex} className="thoughts-block"><tool_call></span>;
+          }
+          return <span key={thoughtIndex}>{thoughtPart}</span>;
+        });
+      }
+      
+      return <span key={index}>{part}</span>;
+    });
+  };
+
+  // Function to render message content with collapsible thoughts
+  const renderMessageContent = (message) => {
+    if (!message.text) return null;
+    
+    // Simple approach: wrap any text that starts with "<tool_call>" in a collapsible div
+    const lines = message.text.split('\n');
+    const processedLines = [];
+    
+    let inThoughtsBlock = false;
+    let thoughtsContent = [];
+    
+    lines.forEach((line, index) => {
+      if (line.trim().startsWith('<tool_call>')) {
+        if (!inThoughtsBlock) {
+          // Start a new thoughts block
+          inThoughtsBlock = true;
+          thoughtsContent = [line];
+        } else {
+          // Continue the thoughts block
+          thoughtsContent.push(line);
+        }
+      } else {
+        if (inThoughtsBlock) {
+          // End the thoughts block and create collapsible element
+          processedLines.push(
+            <div key={`thoughts-${index}`} className="collapsible-thoughts">
+              <details>
+                <summary>Thoughts</summary>
+                <div className="thoughts-content">
+                  {thoughtsContent.join('\n')}
+                </div>
+              </details>
+            </div>
+          );
+          inThoughtsBlock = false;
+          thoughtsContent = [];
+        }
+        processedLines.push(<div key={`line-${index}`}>{line}</div>);
+      }
+    });
+    
+    // Handle any remaining thoughts content
+    if (inThoughtsBlock && thoughtsContent.length > 0) {
+      processedLines.push(
+        <div key="final-thoughts" className="collapsible-thoughts">
+          <details>
+            <summary>Thoughts</summary>
+            <div className="thoughts-content">
+              {thoughtsContent.join('\n')}
+            </div>
+          </details>
+        </div>
+      );
+    }
+    
+    return processedLines;
+  };
+
   return (
     <div className="app">
       <div className="chat-container">
@@ -98,7 +182,9 @@ const App = () => {
                 className={`message ${message.sender}`}
               >
                 <div className="message-content">
-                  <div className="message-text">{message.text}</div>
+                  <div className="message-text">
+                    {message.sender === 'ai' ? renderMessageContent(message) : message.text}
+                  </div>
                   <div className="message-time">{formatTime(message.timestamp)}</div>
                 </div>
               </div>
