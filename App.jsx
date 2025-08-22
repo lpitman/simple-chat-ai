@@ -90,16 +90,18 @@ const App = () => {
     let thoughtsContent = [];
     
     lines.forEach((line, index) => {
+      // Check if this line starts a thoughts block (starts with "<tool_call>")
       if (line.trim().startsWith('<tool_call>')) {
         if (!inThoughtsBlock) {
-          // Start a new thoughts block
+          // We're starting a new thoughts block
           inThoughtsBlock = true;
           thoughtsContent = [line];
         } else {
-          // Continue the thoughts block
+          // Continue the existing thoughts block
           thoughtsContent.push(line);
         }
       } else {
+        // This line is not part of a thoughts block
         if (inThoughtsBlock) {
           // End the thoughts block and create collapsible element
           processedLines.push(
@@ -115,11 +117,12 @@ const App = () => {
           inThoughtsBlock = false;
           thoughtsContent = [];
         }
+        // Add the regular line
         processedLines.push(<div key={`line-${index}`}>{line}</div>);
       }
     });
     
-    // Handle any remaining thoughts content
+    // Handle any remaining thoughts content at the end
     if (inThoughtsBlock && thoughtsContent.length > 0) {
       processedLines.push(
         <div key="final-thoughts" className="collapsible-thoughts">
