@@ -40,3 +40,249 @@
 .read-the-docs {
   color: #888;
 }
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f5f5;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.chat-container {
+  width: 100%;
+  max-width: 800px;
+  height: 90vh;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-header {
+  padding: 20px;
+  background-color: #4a6fa5;
+  color: white;
+  text-align: center;
+}
+
+.chat-header h1 {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+
+.chat-header p {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  margin-bottom: 15px;
+  max-width: 80%;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.message.user {
+  align-self: flex-end;
+}
+
+.message.ai {
+  align-self: flex-start;
+}
+
+.message-content {
+  padding: 12px 16px;
+  border-radius: 18px;
+  position: relative;
+}
+
+.message.user .message-content {
+  background-color: #4a6fa5;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.message.ai .message-content {
+  background-color: #f0f0f0;
+  color: #333;
+  border-bottom-left-radius: 4px;
+}
+
+.message-text {
+  line-height: 1.4;
+}
+
+.message-time {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-top: 5px;
+  text-align: right;
+}
+
+.welcome-message {
+  text-align: center;
+  padding: 30px;
+  color: #666;
+}
+
+.welcome-message p {
+  font-size: 1.1rem;
+}
+
+.input-container {
+  display: flex;
+  padding: 15px;
+  border-top: 1px solid #eee;
+  background-color: white;
+}
+
+.input-container input {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 24px;
+  outline: none;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.input-container input:focus {
+  border-color: #4a6fa5;
+}
+
+.input-container button {
+  margin-left: 10px;
+  padding: 12px 20px;
+  background-color: #4a6fa5;
+  color: white;
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+
+.input-container button:hover:not(:disabled) {
+  background-color: #3a5a80;
+}
+
+.input-container button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.typing-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.typing-indicator span {
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  background-color: #999;
+  display: inline-block;
+  margin: 0 2px;
+  animation: bounce 1.5s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@media (max-width: 768px) {
+  .app {
+    padding: 10px;
+  }
+  
+  .chat-container {
+    height: 95vh;
+    border-radius: 8px;
+  }
+  
+  .message {
+    max-width: 90%;
+  }
+  
+  .input-container {
+    padding: 10px;
+  }
+  
+  .input-container input {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .input-container button {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Collapsible thoughts styles */
+.collapsible-thoughts {
+  margin: 10px 0;
+  border-left: 3px solid #4a6fa5;
+  padding-left: 10px;
+  background-color: rgba(74, 111, 165, 0.05);
+  border-radius: 4px;
+}
+
+.collapsible-thoughts details {
+  margin: 5px 0;
+}
+
+.collapsible-thoughts summary {
+  cursor: pointer;
+  font-weight: bold;
+  color: #4a6fa5;
+  padding: 5px 0;
+}
+
+.collapsible-thoughts .thoughts-content {
+  font-family: monospace;
+  white-space: pre-wrap;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
+  margin-top: 5px;
+}

@@ -83,6 +83,67 @@ const App: React.FC = () => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  // Function to render message content with collapsible thoughts
+  const renderMessageContent = (message: { text: string }) => {
+    if (!message.text) return null;
+    
+    // Split the text by lines
+    const lines = message.text.split('\n');
+    const processedLines = [];
+    
+    let inThoughtsBlock = false;
+    let thoughtsContent = [];
+    
+    lines.forEach((line, index) => {
+      // Check if this line starts a thoughts block (starts with "<tool_call>")
+      if (line.trim().startsWith('<tool_call>')) {
+        if (!inThoughtsBlock) {
+          // We're starting a new thoughts block
+          inThoughtsBlock = true;
+          thoughtsContent = [line];
+        } else {
+          // Continue the existing thoughts block
+          thoughtsContent.push(line);
+        }
+      } else {
+        // This line is not part of a thoughts block
+        if (inThoughtsBlock) {
+          // End the thoughts block and create collapsible element
+          processedLines.push(
+            <div key={`thoughts-${index}`} className="collapsible-thoughts">
+              <details>
+                <summary>Thoughts</summary>
+                <div className="thoughts-content">
+                  {thoughtsContent.join('\n')}
+                </div>
+              </details>
+            </div>
+          );
+          inThoughtsBlock = false;
+          thoughtsContent = [];
+        }
+        // Add the regular line
+        processedLines.push(<div key={`line-${index}`}>{line}</div>);
+      }
+    });
+    
+    // Handle any remaining thoughts content at the end
+    if (inThoughtsBlock && thoughtsContent.length > 0) {
+      processedLines.push(
+        <div key="final-thoughts" className="collapsible-thoughts">
+          <details>
+            <summary>Thoughts</summary>
+            <div className="thoughts-content">
+              {thoughtsContent.join('\n')}
+            </div>
+          </details>
+        </div>
+      );
+    }
+    
+    return processedLines;
+  };
+
   return (
     <div className="app">
       <div className="chat-container">
@@ -103,7 +164,9 @@ const App: React.FC = () => {
                 className={`message ${message.sender}`}
               >
                 <div className="message-content">
-                  <div className="message-text">{message.text}</div>
+                  <div className="message-text">
+                    {message.sender === 'ai' ? renderMessageContent(message) : message.text}
+                  </div>
                   <div className="message-time">{formatTime(message.timestamp)}</div>
                 </div>
               </div>
