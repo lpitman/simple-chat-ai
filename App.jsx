@@ -78,37 +78,11 @@ const App = () => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  // Function to process message text and wrap "<tool_call>" blocks in collapsible elements
-  const processMessageText = (text) => {
-    // Split the text by "<tool_call>" blocks
-    const parts = text.split(/(\u2694+)/);
-    
-    return parts.map((part, index) => {
-      // If this part is a "<tool_call>" block, wrap it in a collapsible element
-      if (part === '<tool_call>') {
-        return <span key={index} className="thoughts-block"><tool_call></span>;
-      }
-      
-      // If this part contains thoughts content, wrap it appropriately
-      if (part.includes('<tool_call>')) {
-        const thoughtParts = part.split(/(\u2694+)/);
-        return thoughtParts.map((thoughtPart, thoughtIndex) => {
-          if (thoughtPart === '<tool_call>') {
-            return <span key={thoughtIndex} className="thoughts-block"><tool_call></span>;
-          }
-          return <span key={thoughtIndex}>{thoughtPart}</span>;
-        });
-      }
-      
-      return <span key={index}>{part}</span>;
-    });
-  };
-
   // Function to render message content with collapsible thoughts
   const renderMessageContent = (message) => {
     if (!message.text) return null;
     
-    // Simple approach: wrap any text that starts with "<tool_call>" in a collapsible div
+    // Split the text by lines
     const lines = message.text.split('\n');
     const processedLines = [];
     
