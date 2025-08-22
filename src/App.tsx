@@ -1,35 +1,143 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useRef, useEffect } from 'react';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App: React.FC = () => {
+  const [messages, setMessages] = useState<Array<{
+    id: number;
+    text: string;
+    sender: 'user' | 'ai';
+    timestamp: Date;
+  }>>([]);
+  const [inputValue, setInputValue] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputValue.trim() || isLoading) return;
+
+    // Add user message
+    const userMessage = {
+      id: Date.now(),
+      text: inputValue,
+      sender: 'user' as const,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInputValue('');
+    setIsLoading(true);
+
+    try {
+      // Send request to Ollama service
+      const response = await fetch('http://localhost:11434/api/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'qwen3',
+          prompt: inputValue,
+          stream: false
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Add AI message
+      const aiMessage = {
+        id: Date.now() + 1,
+        text: data.response,
+        sender: 'ai' as const,
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, aiMessage]);
+    } catch (error) {
+      console.error('Error:', error);
+      const errorMessage = {
+        id: Date.now() + 1,
+        text: 'Sorry, I encountered an error. Please try again.',
+        sender: 'ai' as const,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="app">
+      <div className="chat-container">
+        <div className="chat-header">
+          <h1>AI Chat</h1>
+          <p>Powered by Ollama Qwen3</p>
+        </div>
+        
+        <div className="messages-container">
+          {messages.length === 0 ? (
+            <div className="welcome-message">
+              <p>Welcome! Ask me anything and I'll do my best to help.</p>
+            </div>
+          ) : (
+            messages.map((message) => (
+              <div 
+                key={message.id} 
+                className={`message ${message.sender}`}
+              >
+                <div className="message-content">
+                  <div className="message-text">{message.text}</div>
+                  <div className="message-time">{formatTime(message.timestamp)}</div>
+                </div>
+              </div>
+            ))
+          )}
+          {isLoading && (
+            <div className="message ai typing">
+              <div className="message-content">
+                <div className="typing-indicator">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
 
-export default App
+        <form className="input-container" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            placeholder="Type your message here..."
+            disabled={isLoading}
+          />
+          <button type="submit" disabled={isLoading || !inputValue.trim()}>
+            Send
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default App;
