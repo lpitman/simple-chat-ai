@@ -96,18 +96,15 @@ const App: React.FC = () => {
     
     lines.forEach((line, index) => {
       // Check if this line starts a thoughts block (starts with "<tool_call>")
-      if (line.trim().startsWith('<tool_call>')) {
-        if (!inThoughtsBlock) {
-          // We're starting a new thoughts block
-          inThoughtsBlock = true;
-          thoughtsContent = [line];
-        } else {
-          // Continue the existing thoughts block
-          thoughtsContent.push(line);
-        }
-      } else {
-        // This line is not part of a thoughts block
-        if (inThoughtsBlock) {
+      if (line.trim().startsWith('<think>') && !inThoughtsBlock) {
+        inThoughtsBlock
+        // We're starting a new thoughts block
+        inThoughtsBlock = true;
+        return;
+      } 
+      
+      if (inThoughtsBlock) {
+        if (line.trim().endsWith('</think>')) {
           // End the thoughts block and create collapsible element
           processedLines.push(
             <div key={`thoughts-${index}`} className="collapsible-thoughts">
@@ -121,7 +118,11 @@ const App: React.FC = () => {
           );
           inThoughtsBlock = false;
           thoughtsContent = [];
+          return;
+        } else {
+          thoughtsContent.push(line);
         }
+      } else {
         // Add the regular line
         processedLines.push(<div key={`line-${index}`}>{line}</div>);
       }
