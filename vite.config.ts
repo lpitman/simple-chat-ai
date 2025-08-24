@@ -5,6 +5,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: 'logan-linux.tailnet.internal'
+    host: 'logan-linux.tailnet.internal',
+    allowedHosts: ['logan-linux.tailnet.internal'],
+    port: 5173
   }
 })
