@@ -52,6 +52,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--bg-color);
+  display: flex;
+  justify-content: center;
+  align-items: center; /* for vertical centering */
 }
 
 .app {
@@ -74,6 +77,8 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .chat-header {
@@ -259,6 +264,8 @@ body {
   .chat-container {
     height: 95vh;
     border-radius: 8px;
+    margin-left: auto;
+    margin-right: auto;
   }
   
   .message {
