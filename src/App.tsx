@@ -101,11 +101,11 @@ const App: React.FC = () => {
     let thoughtsContent = [];
     
     lines.forEach((line, index) => {
-      // Check if this line starts a thoughts block (starts with "<tool_call>")
-      if (line.trim().startsWith('<tool_call>') && !inThoughtsBlock) {
+      // Check if this line starts a thoughts block (starts with "<think>")
+      if (line.trim().startsWith('<think>') && !inThoughtsBlock) {
         inThoughtsBlock = true;
       } else if (inThoughtsBlock) {
-        if (line.trim().endsWith('<tool_call>')) {
+        if (line.trim().endsWith('</think>')) {
           // End the thoughts block and create collapsible element
           processedLines.push(
             <div key={`thoughts-${index}`} className="collapsible-thoughts">
