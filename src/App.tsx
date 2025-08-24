@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ChatContainer from './ChatContainer';
+import MessageContent from './MessageContent';
 import './App.css';
 
 const App: React.FC = () => {
@@ -89,62 +90,6 @@ const App: React.FC = () => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  // Function to render message content with collapsible thoughts
-  const renderMessageContent = (message: { text: string }) => {
-    if (!message.text) return null;
-    
-    // Split the text by lines
-    const lines = message.text.split('\n');
-    const processedLines = [];
-    
-    let inThoughtsBlock = false;
-    let thoughtsContent = [];
-    
-    lines.forEach((line, index) => {
-      // Check if this line starts a thoughts block (starts with "<think>")
-      if (line.trim().startsWith('<think>') && !inThoughtsBlock) {
-        inThoughtsBlock = true;
-      } else if (inThoughtsBlock) {
-        if (line.trim().endsWith('</think>')) {
-          // End the thoughts block and create collapsible element
-          processedLines.push(
-            <div key={`thoughts-${index}`} className="collapsible-thoughts">
-              <details>
-                <summary>Thoughts</summary>
-                <div className="thoughts-content">
-                  {thoughtsContent.join('\n')}
-                </div>
-              </details>
-            </div>
-          );
-          inThoughtsBlock = false;
-          thoughtsContent = [];
-        } else {
-          thoughtsContent.push(line);
-        }
-      } else {
-        // Add the regular line
-        processedLines.push(<div key={`line-${index}`}>{line}</div>);
-      }
-    });
-    
-    // Handle any remaining thoughts content at the end
-    if (inThoughtsBlock && thoughtsContent.length > 0) {
-      processedLines.push(
-        <div key="final-thoughts" className="collapsible-thoughts">
-          <details>
-            <summary>Thoughts</summary>
-            <div className="thoughts-content">
-              {thoughtsContent.join('\n')}
-            </div>
-          </details>
-        </div>
-      );
-    }
-    
-    return processedLines;
-  };
-
   return (
     <div className="app">
       <ChatContainer 
@@ -154,7 +99,7 @@ const App: React.FC = () => {
         setInputValue={setInputValue}
         handleSubmit={handleSubmit}
         formatTime={formatTime}
-        renderMessageContent={renderMessageContent}
+        renderMessageContent={(message) => <MessageContent message={message} />}
       />
     </div>
   );
