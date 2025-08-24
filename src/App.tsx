@@ -10,7 +10,21 @@ const App: React.FC = () => {
   }>>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    const savedMode = localStorage.getItem('darkMode');
+    return savedMode ? JSON.parse(savedMode) : false;
+  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Apply dark mode class to body
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+  }, [darkMode]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -96,15 +110,11 @@ const App: React.FC = () => {
     
     lines.forEach((line, index) => {
       // Check if this line starts a thoughts block (starts with "<tool_call>")
-      if (line.trim().startsWith('<think>') && !inThoughtsBlock) {
-        inThoughtsBlock
-        // We're starting a new thoughts block
+      if (line.trim().startsWith('<tool_call>') && !inThoughtsBlock) {
         inThoughtsBlock = true;
-        return;
-      } 
-      
-      if (inThoughtsBlock) {
-        if (line.trim().endsWith('</think>')) {
+        thoughtsContent = [line];
+      } else if (inThoughtsBlock) {
+        if (line.trim().endsWith('<tool_call>')) {
           // End the thoughts block and create collapsible element
           processedLines.push(
             <div key={`thoughts-${index}`} className="collapsible-thoughts">
@@ -118,7 +128,6 @@ const App: React.FC = () => {
           );
           inThoughtsBlock = false;
           thoughtsContent = [];
-          return;
         } else {
           thoughtsContent.push(line);
         }
@@ -151,6 +160,13 @@ const App: React.FC = () => {
         <div className="chat-header">
           <h1>AI Chat</h1>
           <p>Powered by Ollama Qwen3</p>
+          <button 
+            onClick={() => setDarkMode(!darkMode)}
+            className="dark-mode-toggle"
+            aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+          </button>
         </div>
         
         <div className="messages-container">
