@@ -94,6 +94,11 @@ const App: React.FC = () => {
     setDarkMode(!darkMode);
   };
 
+  // Create a proper render function that doesn't use hooks directly
+  const renderMessageContent = (message: { text: string; sender: 'user' | 'ai' }) => {
+    return <MessageContent message={message} />;
+  };
+
   return (
     <div className="app">
       <ChatContainer 
@@ -103,7 +108,7 @@ const App: React.FC = () => {
         setInputValue={setInputValue}
         handleSubmit={handleSubmit}
         formatTime={formatTime}
-        renderMessageContent={(message) => <MessageContent message={message} />}
+        renderMessageContent={renderMessageContent}
         darkMode={darkMode}
         toggleDarkMode={toggleDarkMode}
       />

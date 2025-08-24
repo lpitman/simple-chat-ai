@@ -16,10 +16,10 @@ const MessageContent: React.FC<{ message: Message }> = ({ message }) => {
   
   lines.forEach((line, index) => {
     // Check if this line starts a thoughts block (starts with "<tool_call>")
-    if (line.trim().startsWith('<think>') && !inThoughtsBlock) {
+    if (line.trim().startsWith('<tool_call>') && !inThoughtsBlock) {
       inThoughtsBlock = true;
     } else if (inThoughtsBlock) {
-      if (line.trim().endsWith('</think>')) {
+      if (line.trim().endsWith('<tool_call>')) {
         // End the thoughts block and create collapsible element
         processedLines.push(
           <div key={`thoughts-${index}`} className="collapsible-thoughts">
