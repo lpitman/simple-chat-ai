@@ -60,6 +60,8 @@ body {
   justify-content: center;
   align-items: center;
   padding: 20px;
+  /* Add this to ensure proper centering */
+  width: 100%;
 }
 
 .chat-container {
