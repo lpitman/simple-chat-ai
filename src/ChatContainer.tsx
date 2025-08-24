@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './ChatContainer.css';
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   id: number;
@@ -68,7 +69,11 @@ const ChatContainer: React.FC<{
             >
               <div className="message-content">
                 <div className="message-text">
-                  {message.sender === 'ai' ? renderMessageContent(message) : message.text}
+                  {message.sender === 'ai' ? (
+                    <ReactMarkdown>{message.text}</ReactMarkdown>
+                  ) : (
+                    message.text
+                  )}
                 </div>
                 <div className="message-time">{formatTime(message.timestamp)}</div>
               </div>
