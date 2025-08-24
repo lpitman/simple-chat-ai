@@ -90,6 +90,10 @@ const App: React.FC = () => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
   return (
     <div className="app">
       <ChatContainer 
@@ -100,6 +104,8 @@ const App: React.FC = () => {
         handleSubmit={handleSubmit}
         formatTime={formatTime}
         renderMessageContent={(message) => <MessageContent message={message} />}
+        darkMode={darkMode}
+        toggleDarkMode={toggleDarkMode}
       />
     </div>
   );
