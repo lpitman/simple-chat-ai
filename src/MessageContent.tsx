@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   text: string;
@@ -15,11 +16,11 @@ const MessageContent: React.FC<{ message: Message }> = ({ message }) => {
   let thoughtsContent = [];
   
   lines.forEach((line, index) => {
-    // Check if this line starts a thoughts block (starts with "<think>")
-    if (line.trim().startsWith('<think>') && !inThoughtsBlock) {
+    // Check if this line starts a thoughts block (starts with "<tool_call>")
+    if (line.trim().startsWith('<tool_call>') && !inThoughtsBlock) {
       inThoughtsBlock = true;
     } else if (inThoughtsBlock) {
-      if (line.trim().endsWith('</think>')) {
+      if (line.trim().endsWith('<tool_call>')) {
         // End the thoughts block and create collapsible element
         processedLines.push(
           <div key={`thoughts-${index}`} className="collapsible-thoughts">
@@ -37,8 +38,12 @@ const MessageContent: React.FC<{ message: Message }> = ({ message }) => {
         thoughtsContent.push(line);
       }
     } else {
-      // Add the regular line
-      processedLines.push(<div key={`line-${index}`}>{line}</div>);
+      // Add the regular line - apply markdown formatting here
+      processedLines.push(
+        <div key={`line-${index}`}>
+          <ReactMarkdown>{line}</ReactMarkdown>
+        </div>
+      );
     }
   });
   
