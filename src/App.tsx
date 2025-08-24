@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import ChatContainer from './ChatContainer';
 import './App.css';
 
 const App: React.FC = () => {
@@ -14,7 +15,6 @@ const App: React.FC = () => {
     const savedMode = localStorage.getItem('darkMode');
     return savedMode ? JSON.parse(savedMode) : false;
   });
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Apply dark mode class to body
   useEffect(() => {
@@ -25,14 +25,6 @@ const App: React.FC = () => {
     }
     localStorage.setItem('darkMode', JSON.stringify(darkMode));
   }, [darkMode]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,10 +102,10 @@ const App: React.FC = () => {
     
     lines.forEach((line, index) => {
       // Check if this line starts a thoughts block (starts with "<tool_call>")
-      if (line.trim().startsWith('<think>') && !inThoughtsBlock) {
+      if (line.trim().startsWith('<tool_call>') && !inThoughtsBlock) {
         inThoughtsBlock = true;
       } else if (inThoughtsBlock) {
-        if (line.trim().endsWith('</think>')) {
+        if (line.trim().endsWith('<tool_call>')) {
           // End the thoughts block and create collapsible element
           processedLines.push(
             <div key={`thoughts-${index}`} className="collapsible-thoughts">
@@ -155,66 +147,15 @@ const App: React.FC = () => {
 
   return (
     <div className="app">
-      <div className="chat-container">
-        <div className="chat-header">
-          <h1>AI Chat</h1>
-          <p>Powered by Ollama Qwen3</p>
-          <button 
-            onClick={() => setDarkMode(!darkMode)}
-            className="dark-mode-toggle"
-            aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-          >
-            {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
-          </button>
-        </div>
-        
-        <div className="messages-container">
-          {messages.length === 0 ? (
-            <div className="welcome-message">
-              <p>Welcome! Ask me anything and I'll do my best to help.</p>
-            </div>
-          ) : (
-            messages.map((message) => (
-              <div 
-                key={message.id} 
-                className={`message ${message.sender}`}
-              >
-                <div className="message-content">
-                  <div className="message-text">
-                    {message.sender === 'ai' ? renderMessageContent(message) : message.text}
-                  </div>
-                  <div className="message-time">{formatTime(message.timestamp)}</div>
-                </div>
-              </div>
-            ))
-          )}
-          {isLoading && (
-            <div className="message ai typing">
-              <div className="message-content">
-                <div className="typing-indicator">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-
-        <form className="input-container" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Type your message here..."
-            disabled={isLoading}
-          />
-          <button type="submit" disabled={isLoading || !inputValue.trim()}>
-            Send
-          </button>
-        </form>
-      </div>
+      <ChatContainer 
+        messages={messages}
+        inputValue={inputValue}
+        isLoading={isLoading}
+        setInputValue={setInputValue}
+        handleSubmit={handleSubmit}
+        formatTime={formatTime}
+        renderMessageContent={renderMessageContent}
+      />
     </div>
   );
 };
