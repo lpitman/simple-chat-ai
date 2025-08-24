@@ -16,6 +16,8 @@ const ChatContainer: React.FC<{
   handleSubmit: (e: React.FormEvent) => void;
   formatTime: (date: Date) => string;
   renderMessageContent: (message: Message) => JSX.Element | null;
+  darkMode?: boolean;
+  toggleDarkMode?: () => void;
 }> = ({ 
   messages, 
   inputValue, 
@@ -23,7 +25,9 @@ const ChatContainer: React.FC<{
   setInputValue, 
   handleSubmit, 
   formatTime, 
-  renderMessageContent 
+  renderMessageContent,
+  darkMode,
+  toggleDarkMode
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -40,6 +44,15 @@ const ChatContainer: React.FC<{
       <div className="chat-header">
         <h1>AI Chat</h1>
         <p>Powered by Ollama Qwen3</p>
+        {toggleDarkMode && (
+          <button 
+            className="dark-mode-toggle"
+            onClick={toggleDarkMode}
+            aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {darkMode ? "☀️" : "🌙"}
+          </button>
+        )}
       </div>
       
       <div className="messages-container">
