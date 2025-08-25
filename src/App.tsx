@@ -45,7 +45,7 @@ const App: React.FC = () => {
 
     try {
       // Send request to Ollama service
-      const response = await fetch('http://logan-linux.tailnet.internal:11434/api/generate', {
+      const response = await fetch('https://ai-chat.haverman.duckdns.org/api/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
