@@ -13,7 +13,7 @@ const MessageContent: React.FC<{ message: Message }> = ({ message }) => {
   const processedLines = [];
   
   let inThoughtsBlock = false;
-  let thoughtsContent = [];
+  let thoughtsContent: string[] = [];
   
   lines.forEach((line, index) => {
     // Check if this line starts a thoughts block (starts with "<think>")
