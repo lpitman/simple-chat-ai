@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import './ChatContainer.css';
 
 interface Message {
@@ -15,7 +15,7 @@ const ChatContainer: React.FC<{
   setInputValue: (value: string) => void;
   handleSubmit: (e: React.FormEvent) => void;
   formatTime: (date: Date) => string;
-  renderMessageContent: (message: Message) => JSX.Element | null;
+  renderMessageContent: (message: Message) => React.ReactNode;
   darkMode?: boolean;
   toggleDarkMode?: () => void;
 }> = ({ 
