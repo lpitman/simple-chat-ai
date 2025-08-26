@@ -1,69 +1,183 @@
-# React + TypeScript + Vite
+# Simple Chat AI: A Local AI Experimentation Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Overview
 
-Currently, two official plugins are available:
+This project provides a simple, full-stack web application designed for experimenting with and interacting with locally hosted Large Language Models (LLMs) via [Ollama](https://ollama.com/). It serves as a practical sandbox for developers and AI enthusiasts to explore local AI inference, integrate custom tool-calling functionalities, and understand the deployment of such a system in a production-like environment.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The primary motivation behind this project is to offer a hands-on way to:
+*   **Run AI Locally**: Leverage the power of local LLMs without relying on cloud-based APIs, ensuring privacy and control over your AI interactions.
+*   **Experiment with Tool-Calling**: Understand and implement how AI models can interact with external services (tools) to augment their capabilities. The project includes a working example of a Wikipedia search tool.
+*   **Full-Stack Integration**: See how a modern web frontend communicates with a Node.js backend, which in turn orchestrates interactions with a local AI runtime and external APIs.
+*   **Production Deployment**: Learn about deploying such an application using common web server and service management tools like Nginx and Systemd.
 
-## Expanding the ESLint configuration
+## Technology Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+This application is built using a robust and modern technology stack:
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+*   **Frontend**:
+    *   **React**: A declarative, component-based JavaScript library for building user interfaces.
+    *   **TypeScript**: A superset of JavaScript that adds static typing, enhancing code quality and maintainability.
+    *   **Vite**: A fast build tool that provides an excellent development experience for modern web projects.
+*   **Backend**:
+    *   **Node.js (Express)**: A fast, unopinionated, minimalist web framework for Node.js, used to create the API server.
+    *   **Ollama Client (`ollama` npm package)**: Facilitates communication with the local Ollama instance.
+    *   **`wikijs`**: A Node.js library used to interact with the Wikipedia API for the tool-calling example.
+*   **AI Runtime**:
+    *   **Ollama**: A powerful tool for running large language models locally. The backend connects to an Ollama instance, which can be running on the same machine or a separate server (e.g., `logan-linux.tailnet.internal:11434` in this setup).
+*   **Infrastructure (for Production Deployment)**:
+    *   **Nginx**: A high-performance web server and reverse proxy. It serves the static frontend assets and proxies API requests to the Node.js backend.
+    *   **Systemd**: A system and service manager for Linux operating systems, used to manage the Node.js backend as a persistent service.
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+## Features
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+*   **Interactive Chat Interface**: A clean and responsive UI for real-time conversations with the AI.
+*   **Local AI Inference**: All AI processing is handled by your local Ollama instance, ensuring data privacy and offline capability.
+*   **Extensible Tool-Calling**: The backend is designed to allow easy integration of new tools. The current implementation includes:
+    *   **Wikipedia Search Tool**: The AI can automatically query Wikipedia for information when prompted (e.g., "Search Wikipedia for quantum physics" or "Wikipedia: Eiffel Tower").
+*   **Dark Mode**: A toggle for switching between light and dark themes for improved user experience.
+*   **Modular Backend**: The backend is structured with separate files for tools and API routes, promoting maintainability and scalability.
+
+## Getting Started (Local Development)
+
+To run this project locally for development:
+
+### Prerequisites
+
+1.  **Node.js and npm**: Ensure you have Node.js (v18 or higher recommended) and npm installed.
+2.  **Ollama**: Download and install Ollama from [ollama.com](https://ollama.com/).
+3.  **Download an LLM**: Pull a compatible model using Ollama. The project is configured to use `qwen3`, but you can adjust this in `backend/routes/chat.js`.
+    ```bash
+    ollama pull qwen3
+    ```
+    Ensure your Ollama instance is running and accessible from your backend (default is `http://localhost:11434`). If it's on a different machine, update the `host` in `backend/server.js`.
+
+### Steps
+
+1.  **Clone the Repository**:
+    ```bash
+    git clone <your-repo-url> simple-chat-ai
+    cd simple-chat-ai
+    ```
+2.  **Install Frontend Dependencies**:
+    ```bash
+    npm install
+    ```
+3.  **Install Backend Dependencies**:
+    ```bash
+    cd backend
+    npm install
+    cd ..
+    ```
+4.  **Start the Backend Server**:
+    ```bash
+    cd backend
+    npm start
+    ```
+    The backend will start on `http://localhost:3001`.
+5.  **Start the Frontend Development Server**:
+    Open a new terminal window, navigate back to the project root (`simple-chat-ai`), and run:
+    ```bash
+    npm run dev -- --host
+    ```
+    The frontend will typically be available at `http://localhost:5173` (or another port if 5173 is in use).
+
+You can now interact with your local AI model through the chat interface. Try asking questions that might trigger the Wikipedia tool, like "What is the capital of France?" or "Tell me about the history of the internet from Wikipedia."
+
+## Deployment (Production)
+
+Deploying this application involves setting up Nginx as a reverse proxy for the frontend and backend, and managing the backend as a systemd service.
+
+### Key Deployment Components
+
+*   **Frontend Serving**: Nginx serves the static build assets of the React application.
+*   **Backend Proxying**: Nginx proxies API requests from `/api/chat` to the Node.js backend running on `http://localhost:3001` (or an internal IP).
+*   **Systemd Service**: The Node.js backend is configured as a systemd service to ensure it starts on boot and automatically restarts if it crashes.
+
+### Nginx Configuration Example
+
+A typical Nginx configuration for this setup would look like this (adjust paths and domain names as necessary):
+
+```nginx
+server {
+    server_name your_domain.com; # e.g., haverman.duckdns.org
+
+    root /srv/http/simple-chat-ai/dist; # Path to your frontend build
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /api/ {
+        # IMPORTANT: The trailing slash on proxy_pass is crucial for correct path mapping.
+        proxy_pass http://localhost:3001/api/; 
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Optional: Add SSL configuration (e.g., with Certbot)
+    # listen 443 ssl;
+    # ssl_certificate /etc/letsencrypt/live/your_domain.com/fullchain.pem;
+    # ssl_certificate_key /etc/letsencrypt/live/your_domain.com/privkey.pem;
+    # include /etc/letsencrypt/options-ssl-nginx.conf;
+    # ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+}
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Systemd Service Setup
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+A systemd service file (e.g., `/etc/systemd/system/simple-chat-ai-backend.service`) ensures your backend runs reliably:
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```ini
+[Unit]
+Description=Simple Chat AI Backend Service
+After=network.target
+
+[Service]
+User=simple-chat-ai-user # Create a dedicated user for security
+WorkingDirectory=/opt/simple-chat-ai-backend # Path where your backend code resides
+ExecStart=/usr/bin/node server.js # Path to your Node.js executable and server.js
+Restart=always
+RestartSec=5
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=simple-chat-ai-backend
+
+[Install]
+WantedBy=multi-user.target
 ```
+Remember to `sudo systemctl daemon-reload`, `sudo systemctl enable simple-chat-ai-backend.service`, and `sudo systemctl start simple-chat-ai-backend.service` after setting this up.
+
+### Deployment Script
+
+A separate deployment script (not part of this repository) is recommended for automating the build, copying files, and restarting services on your server. This script would typically:
+1.  Pull the latest changes from your Git repository.
+2.  Run `npm install` and `npm run build` for the frontend.
+3.  Copy the frontend `dist` directory to `/srv/http/simple-chat-ai`.
+4.  Run `npm install` for the backend.
+5.  Copy the entire backend directory (including `node_modules`) to `/opt/simple-chat-ai-backend`.
+6.  Restart the `simple-chat-ai-backend.service` via systemd.
+
+## Extending the Project
+
+### Adding New Tools
+
+To add new tool-calling capabilities:
+1.  **Create a new tool file** in `backend/tools/` (e.g., `myNewTool.js`).
+2.  **Implement the tool's function**: This function should perform the external action (e.g., fetching weather data, interacting with a database).
+3.  **Define the tool for Ollama**: Create an object describing the tool's `name`, `description`, and `parameters` in the format specified by Ollama's tool-calling API.
+4.  **Export the function and definition** from the tool file.
+5.  **Import the new tool** into `backend/routes/chat.js`.
+6.  **Add the tool's function to `availableFunctions`** and its definition to the `tools` array passed to `ollamaClient.chat()`.
+
+### Switching AI Models
+
+To use a different LLM:
+1.  **Pull the new model** using Ollama (e.g., `ollama pull mistral`).
+2.  **Update the `model` variable** in `backend/routes/chat.js` to the name of your new model (e.g., `'mistral'`).
+
+## License
+
+This project is open-source and available under the ISC License.
