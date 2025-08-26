@@ -31,6 +31,17 @@ const App: React.FC = () => {
     e.preventDefault();
     if (!inputValue.trim() || isLoading) return;
 
+    // Determine the backend base URL dynamically
+    let backendBaseUrl: string;
+    if (import.meta.env.DEV) {
+      // In development, use localhost:3001 as the backend runs on a different port
+      backendBaseUrl = 'http://localhost:3001';
+    } else {
+      // In production, assume the API is proxied under /api on the same host and port
+      // as the frontend. window.location.host includes the port if it's not default (e.g., :5173).
+      backendBaseUrl = `${window.location.protocol}//${window.location.host}`;
+    }
+
     // Add user message
     const userMessage = {
       id: Date.now(),
@@ -45,7 +56,7 @@ const App: React.FC = () => {
 
     try {
       // Send request to the new backend endpoint
-      const response = await fetch('http://localhost:3001/api/generate', { // Changed URL
+      const response = await fetch(`${backendBaseUrl}/api/generate`, { // Updated URL construction
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
