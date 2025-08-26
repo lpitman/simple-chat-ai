@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import ChatContainer from './ChatContainer';
 import MessageContent from './MessageContent';
 import './App.css';
-import { themes, ThemeColors } from './themes'; // Import themes and ThemeColors interface
+import { themes } from './themes'; // Only import the runtime value 'themes'
+
+// Define ThemeColors type based on the structure of a theme in the 'themes' object
+// This ensures type safety without needing to import the interface directly at runtime.
+type ThemeColors = typeof themes['light'];
 
 // Define the Message type to include both UI display properties and Ollama API properties
 interface Message {
