@@ -177,7 +177,3 @@ To add new tool-calling capabilities:
 To use a different LLM:
 1.  **Pull the new model** using Ollama (e.g., `ollama pull mistral`).
 2.  **Update the `model` variable** in `backend/routes/chat.js` to the name of your new model (e.g., `'mistral'`).
-
-## License
-
-This project is open-source and available under the ISC License.
