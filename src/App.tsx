@@ -3,13 +3,23 @@ import ChatContainer from './ChatContainer';
 import MessageContent from './MessageContent';
 import './App.css';
 
+// Define the Message type to include both UI display properties and Ollama API properties
+interface Message {
+  id: number; // Unique ID for React keys (for UI rendering)
+  text: string; // The text content to display in the UI
+  sender: 'user' | 'ai'; // For UI styling (user/ai bubble)
+  timestamp: Date; // For UI display
+
+  // Properties for Ollama API (role and content are always present for Ollama)
+  role: 'user' | 'assistant' | 'tool';
+  content: string;
+  // Optional properties for Ollama's tool calls (though backend handles execution)
+  tool_calls?: Array<{ id: string; function: { name: string; arguments: any } }>;
+  tool_call_id?: string;
+}
+
 const App: React.FC = () => {
-  const [messages, setMessages] = useState<Array<{
-    id: number;
-    text: string;
-    sender: 'user' | 'ai';
-    timestamp: Date;
-  }>>([]);
+  const [messages, setMessages] = useState<Message[]>([]); // Use the new Message type
   const [inputValue, setInputValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -38,58 +48,81 @@ const App: React.FC = () => {
       backendBaseUrl = 'http://localhost:3001';
     } else {
       // In production, assume the API is proxied under /api on the same host and port.
-      // An empty string means a relative path, e.g., /api/generate
+      // An empty string means a relative path, e.g., /api/chat
       backendBaseUrl = ''; 
     }
 
-    // Add user message
-    const userMessage = {
+    // Prepare the user message for display and for sending to Ollama
+    const newUserMessage: Message = {
       id: Date.now(),
       text: inputValue,
-      sender: 'user' as const,
-      timestamp: new Date()
+      sender: 'user',
+      timestamp: new Date(),
+      role: 'user', // Ollama role
+      content: inputValue, // Ollama content
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    // Update messages state with the new user message immediately
+    setMessages(prev => [...prev, newUserMessage]);
     setInputValue('');
     setIsLoading(true);
 
     try {
-      // Send request to the new backend endpoint
-      const response = await fetch(`${backendBaseUrl}/api/generate`, { // Updated URL construction
+      // Construct the messages array to send to the backend for Ollama.
+      // Only include the properties Ollama expects: role, content, tool_calls, tool_call_id.
+      const messagesForOllama = messages.map(msg => {
+        const ollamaMsg: { role: string; content: string; tool_calls?: any[]; tool_call_id?: string } = {
+          role: msg.role,
+          content: msg.content,
+        };
+        if (msg.tool_calls) ollamaMsg.tool_calls = msg.tool_calls;
+        if (msg.tool_call_id) ollamaMsg.tool_call_id = msg.tool_call_id;
+        return ollamaMsg;
+      });
+      // Add the current user message to the history for Ollama
+      messagesForOllama.push({ role: newUserMessage.role, content: newUserMessage.content });
+
+
+      // Send request to the new backend endpoint /api/chat
+      const response = await fetch(`${backendBaseUrl}/api/chat`, { // Changed URL to /api/chat
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'qwen3',
-          prompt: inputValue,
-          stream: false
+          messages: messagesForOllama, // Send the full message history
+          // model and stream are now handled by the backend
         })
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error || 'Unknown error'}`);
       }
 
-      const data = await response.json();
-      
-      // Add AI message
-      const aiMessage = {
+      const data = await response.json(); // This `data` is the Ollama message object (e.g., { role: 'assistant', content: '...' })
+
+      // Add AI message (or tool call message if the backend were to pass it through)
+      const aiMessage: Message = {
         id: Date.now() + 1,
-        text: data.response,
-        sender: 'ai' as const,
-        timestamp: new Date()
+        text: data.content || '', // Ollama response has 'content'
+        sender: 'ai',
+        timestamp: new Date(),
+        role: data.role,
+        content: data.content || '',
+        tool_calls: data.tool_calls, // Capture tool calls if any (though backend handles execution)
       };
 
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
       console.error('Error:', error);
-      const errorMessage = {
+      const errorMessage: Message = {
         id: Date.now() + 1,
-        text: 'Sorry, I encountered an error. Please try again.',
-        sender: 'ai' as const,
-        timestamp: new Date()
+        text: `Sorry, I encountered an error: ${error instanceof Error ? error.message : String(error)}. Please try again.`,
+        sender: 'ai',
+        timestamp: new Date(),
+        role: 'assistant',
+        content: `Sorry, I encountered an error: ${error instanceof Error ? error.message : String(error)}. Please try again.`,
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
@@ -106,8 +139,9 @@ const App: React.FC = () => {
   };
 
   // Create a proper render function that doesn't use hooks directly
-  const renderMessageContent = (message: { text: string; sender: 'user' | 'ai' }) => {
-    return <MessageContent message={message} />;
+  const renderMessageContent = (message: Message) => {
+    // MessageContent expects { text: string }, so we pass the 'text' property
+    return <MessageContent message={{ text: message.text }} />;
   };
 
   return (
