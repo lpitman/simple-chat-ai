@@ -44,8 +44,8 @@ const App: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Send request to Ollama service
-      const response = await fetch('https://ai-chat.haverman.duckdns.org/api/generate', {
+      // Send request to the new backend endpoint
+      const response = await fetch('http://localhost:3001/api/generate', { // Changed URL
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
