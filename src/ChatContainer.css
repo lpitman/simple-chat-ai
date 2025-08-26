@@ -36,6 +36,26 @@
   flex-direction: column;
 }
 
+/* Scrollbar styling */
+.messages-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-color);
+  border-radius: 10px;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-color);
+  border-radius: 10px;
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover {
+  background: var(--header-bg-color); /* Use a theme color for hover */
+}
+
+
 .message {
   margin-bottom: 15px;
   max-width: 80%;
@@ -115,8 +135,8 @@
 .input-container button {
   margin-left: 10px;
   padding: 12px 20px;
-  background-color: var(--header-bg-color);
-  color: white;
+  background-color: var(--button-bg-color); /* Use theme variable */
+  color: var(--button-text-color); /* Use theme variable */
   border: none;
   border-radius: 24px;
   cursor: pointer;
@@ -125,11 +145,12 @@
 }
 
 .input-container button:hover:not(:disabled) {
-  background-color: #3a5a80;
+  background-color: #3a5a80; /* Keep a slightly darker hover for user button */
 }
 
 .input-container button:disabled {
-  background-color: #ccc;
+  background-color: var(--button-disabled-bg-color); /* Use theme variable */
+  color: var(--button-disabled-text-color); /* Use theme variable */
   cursor: not-allowed;
 }
 

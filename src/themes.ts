@@ -16,6 +16,12 @@ export interface ThemeColors {
   '--thoughts-bg-color': string;
   '--thoughts-content-bg': string;
   '--thoughts-summary-color': string;
+  '--scrollbar-thumb-color': string;
+  '--scrollbar-track-color': string;
+  '--button-bg-color': string;
+  '--button-text-color': string;
+  '--button-disabled-bg-color': string;
+  '--button-disabled-text-color': string;
 }
 
 export const themes: Record<string, ThemeColors> = {
@@ -37,6 +43,12 @@ export const themes: Record<string, ThemeColors> = {
     '--thoughts-bg-color': 'rgba(74, 111, 165, 0.05)',
     '--thoughts-content-bg': 'rgba(0, 0, 0, 0.03)',
     '--thoughts-summary-color': '#4a6fa5',
+    '--scrollbar-thumb-color': '#888',
+    '--scrollbar-track-color': '#f1f1f1',
+    '--button-bg-color': '#4a6fa5',
+    '--button-text-color': 'white',
+    '--button-disabled-bg-color': '#ccc',
+    '--button-disabled-text-color': '#666',
   },
   dark: {
     '--bg-color': '#1a1a1a',
@@ -56,6 +68,12 @@ export const themes: Record<string, ThemeColors> = {
     '--thoughts-bg-color': 'rgba(74, 111, 165, 0.1)',
     '--thoughts-content-bg': 'rgba(255, 255, 255, 0.05)',
     '--thoughts-summary-color': '#6a8aa5',
+    '--scrollbar-thumb-color': '#555',
+    '--scrollbar-track-color': '#333',
+    '--button-bg-color': '#3a4a5a',
+    '--button-text-color': '#f0f0f0',
+    '--button-disabled-bg-color': '#555',
+    '--button-disabled-text-color': '#999',
   },
   darcula: {
     '--bg-color': '#2B2B2B',
@@ -75,6 +93,12 @@ export const themes: Record<string, ThemeColors> = {
     '--thoughts-bg-color': 'rgba(78, 106, 128, 0.1)',
     '--thoughts-content-bg': 'rgba(0, 0, 0, 0.1)',
     '--thoughts-summary-color': '#6A8090',
+    '--scrollbar-thumb-color': '#616161',
+    '--scrollbar-track-color': '#4E4E4E',
+    '--button-bg-color': '#4E6A80',
+    '--button-text-color': '#FFFFFF',
+    '--button-disabled-bg-color': '#616161',
+    '--button-disabled-text-color': '#999999',
   },
   'tokyo-night': {
     '--bg-color': '#1A1B26',
@@ -94,6 +118,12 @@ export const themes: Record<string, ThemeColors> = {
     '--thoughts-bg-color': 'rgba(122, 162, 247, 0.1)',
     '--thoughts-content-bg': 'rgba(0, 0, 0, 0.1)',
     '--thoughts-summary-color': '#7AA2F7',
+    '--scrollbar-thumb-color': '#565F89',
+    '--scrollbar-track-color': '#3B4261',
+    '--button-bg-color': '#7AA2F7',
+    '--button-text-color': '#FFFFFF',
+    '--button-disabled-bg-color': '#565F89',
+    '--button-disabled-text-color': '#787C99',
   },
   'solarized-dark': {
     '--bg-color': '#002B36',
@@ -113,6 +143,12 @@ export const themes: Record<string, ThemeColors> = {
     '--thoughts-bg-color': 'rgba(38, 139, 210, 0.1)',
     '--thoughts-content-bg': 'rgba(0, 0, 0, 0.1)',
     '--thoughts-summary-color': '#268BD2',
+    '--scrollbar-thumb-color': '#586E75',
+    '--scrollbar-track-color': '#004B56',
+    '--button-bg-color': '#268BD2',
+    '--button-text-color': '#FDF6E3',
+    '--button-disabled-bg-color': '#586E75',
+    '--button-disabled-text-color': '#657B83',
   },
   catppuccin: { // Mocha variant
     '--bg-color': '#1E1E2E',
@@ -132,5 +168,11 @@ export const themes: Record<string, ThemeColors> = {
     '--thoughts-bg-color': 'rgba(137, 180, 250, 0.1)',
     '--thoughts-content-bg': 'rgba(0, 0, 0, 0.1)',
     '--thoughts-summary-color': '#89B4FA',
+    '--scrollbar-thumb-color': '#585B70',
+    '--scrollbar-track-color': '#313244',
+    '--button-bg-color': '#89B4FA',
+    '--button-text-color': '#1E1E2E',
+    '--button-disabled-bg-color': '#585B70',
+    '--button-disabled-text-color': '#A6ADC8',
   },
 };

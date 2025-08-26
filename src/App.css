@@ -18,6 +18,12 @@
   --thoughts-bg-color: rgba(74, 111, 165, 0.05);
   --thoughts-content-bg: rgba(0, 0, 0, 0.03);
   --thoughts-summary-color: #4a6fa5;
+  --scrollbar-thumb-color: #888;
+  --scrollbar-track-color: #f1f1f1;
+  --button-bg-color: #4a6fa5;
+  --button-text-color: white;
+  --button-disabled-bg-color: #ccc;
+  --button-disabled-text-color: #666;
 }
 
 * {
