@@ -1,0 +1,93 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's on top of other content */
+}
+
+.modal-content {
+  background-color: var(--chat-bg-color);
+  border-radius: 10px;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  color: var(--message-ai-text); /* Inherit text color from theme */
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: var(--header-text-color); /* Use header text color for modal title */
+}
+
+.modal-close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--message-ai-text); /* Use general text color for close button */
+  padding: 0 5px;
+}
+
+.modal-close-button:hover {
+  color: var(--header-bg-color); /* Highlight on hover */
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Space between setting items */
+}
+
+.setting-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.setting-item label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: var(--thoughts-summary-color); /* Use a distinct color for setting labels */
+}
+
+.setting-item select,
+.setting-item input[type="text"] {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid var(--input-border-color);
+  background-color: var(--input-bg-color);
+  color: var(--message-ai-text);
+  font-size: 0.9rem;
+  cursor: pointer;
+  appearance: none; /* Remove default dropdown arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2C197.3L159.3%2C69.6c-3.6-3.6-8.6-5.6-13.7-5.6s-10.1%2C2-13.7%2C5.6L5.4%2C197.3c-7.3%2C7.3-7.3%2C19.1%2C0%2C26.4c3.6%2C3.6%2C8.6%2C5.6%2C13.7%2C5.6s10.1-2%2C13.7-5.6l120.7-120.7l120.7%2C120.7c3.6%2C3.6%2C8.6%2C5.6%2C13.7%2C5.6s10.1-2%2C13.7-5.6C294.3%2C216.4%2C294.3%2C204.6%2C287%2C197.3z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 12px;
+  padding-right: 30px; /* Make space for the custom arrow */
+}
+
+.setting-item select:focus,
+.setting-item input[type="text"]:focus {
+  outline: 2px solid var(--header-bg-color);
+  outline-offset: 2px;
+}

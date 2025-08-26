@@ -220,44 +220,27 @@
   margin-top: 5px;
 }
 
-/* Theme selector styles */
-.theme-selector-container {
+/* Settings button styles */
+.settings-button {
   position: absolute;
   top: 20px;
   right: 20px;
-}
-
-.theme-selector-container select {
-  padding: 8px 12px;
-  border-radius: 5px;
-  border: 1px solid var(--input-border-color);
-  background-color: var(--input-bg-color);
-  color: var(--message-ai-text);
-  font-size: 0.9rem;
+  background: none;
+  border: none;
   cursor: pointer;
-  appearance: none; /* Remove default dropdown arrow */
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  /* Changed fill color from black (%23000000) to a neutral dark gray (%23666666) */
-  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2C197.3L159.3%2C69.6c-3.6-3.6-8.6-5.6-13.7-5.6s-10.1%2C2-13.7%2C5.6L5.4%2C197.3c-7.3%2C7.3-7.3%2C19.1%2C0%2C26.4c3.6%2C3.6%2C8.6%2C5.6%2C13.7%2C5.6s10.1-2%2C13.7-5.6l120.7-120.7l120.7%2C120.7c3.6%2C3.6%2C8.6%2C5.6%2C13.7%2C5.6s10.1-2%2C13.7-5.6C294.3%2C216.4%2C294.3%2C204.6%2C287%2C197.3z%22%2F%3E%3C%2Fsvg%3E');
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  background-size: 12px;
-  padding-right: 30px; /* Make space for the custom arrow */
+  color: var(--header-text-color); /* Use header text color for the icon */
+  padding: 0; /* Remove default button padding */
+  display: flex; /* To center the SVG */
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease;
 }
 
-.theme-selector-container select:focus {
-  outline: 2px solid var(--header-bg-color);
-  outline-offset: 2px;
+.settings-button:hover {
+  color: rgba(255, 255, 255, 0.8); /* Slightly dim on hover */
 }
 
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
+.settings-button svg {
+  width: 24px;
+  height: 24px;
 }

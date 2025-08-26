@@ -1,6 +1,7 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import './ChatContainer.css';
 import { themes } from './themes'; // Import themes to get theme names
+import SettingsModal from './SettingsModal'; // Import the new SettingsModal
 
 // Update the Message interface to match the one in src/App.tsx
 interface Message {
@@ -24,8 +25,8 @@ const ChatContainer: React.FC<{
   handleSubmit: (e: React.FormEvent) => void;
   formatTime: (date: Date) => string;
   renderMessageContent: (message: Message) => React.ReactNode;
-  currentThemeName: string; // Changed from darkMode
-  setTheme: (themeName: string) => void; // New prop for setting theme
+  currentThemeName: string;
+  setTheme: (themeName: string) => void;
 }> = ({ 
   messages, 
   inputValue, 
@@ -34,10 +35,11 @@ const ChatContainer: React.FC<{
   handleSubmit, 
   formatTime, 
   renderMessageContent,
-  currentThemeName, // Use currentThemeName
-  setTheme // Use setTheme
+  currentThemeName,
+  setTheme
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false); // State for modal visibility
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -47,25 +49,18 @@ const ChatContainer: React.FC<{
     scrollToBottom();
   }, [messages]);
 
-  const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setTheme(e.target.value);
-  };
-
   return (
     <div className="chat-container">
       <div className="chat-header">
         <h1>AI Chat</h1>
         <p>Powered by Ollama Qwen3</p>
-        <div className="theme-selector-container">
-          <label htmlFor="theme-select" className="visually-hidden">Select Theme:</label>
-          <select id="theme-select" onChange={handleThemeChange} value={currentThemeName}>
-            {Object.keys(themes).map((themeName) => (
-              <option key={themeName} value={themeName}>
-                {themeName.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-              </option>
-            ))}
-          </select>
-        </div>
+        <button className="settings-button" onClick={() => setIsSettingsModalOpen(true)}>
+          {/* Gear icon SVG */}
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-settings">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0-.33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82-.33H9A1.65 1.65 0 0 0 10 3v-.09a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0 .33 1.82V9h.09A1.65 1.65 0 0 0 21 10c.59 0 1.16.23 1.51.68A1.65 1.65 0 0 0 22.91 12v.09a1.65 1.65 0 0 0-.33 1.82l-.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33z"></path>
+          </svg>
+        </button>
       </div>
       
       <div className="messages-container">
@@ -114,6 +109,13 @@ const ChatContainer: React.FC<{
           Send
         </button>
       </form>
+
+      <SettingsModal
+        isOpen={isSettingsModalOpen}
+        onClose={() => setIsSettingsModalOpen(false)}
+        currentThemeName={currentThemeName}
+        setTheme={setTheme}
+      />
     </div>
   );
 };
