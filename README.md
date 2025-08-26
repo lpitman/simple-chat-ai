@@ -55,7 +55,7 @@ To run this project locally for development:
 
 1.  **Clone the Repository**:
     ```bash
-    git clone <your-repo-url> simple-chat-ai
+    git clone http://github.com/lpitman/simple-chat-ai
     cd simple-chat-ai
     ```
 2.  **Install Frontend Dependencies**:
@@ -99,7 +99,7 @@ A typical Nginx configuration for this setup would look like this (adjust paths 
 
 ```nginx
 server {
-    server_name your_domain.com; # e.g., haverman.duckdns.org
+    server_name your_domain.com;
 
     root /srv/http/simple-chat-ai/dist; # Path to your frontend build
     index index.html;
