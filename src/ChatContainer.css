@@ -220,96 +220,43 @@
   margin-top: 5px;
 }
 
-/* Dark mode toggle button */
-.dark-mode-toggle {
+/* Theme selector styles */
+.theme-selector-container {
   position: absolute;
   top: 20px;
   right: 20px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.dark-mode-toggle:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-  transform: scale(1.1);
-}
-
-.dark-mode-toggle:focus {
-  outline: 2px solid var(--header-text-color);
-  outline-offset: 2px;
-}
-
-/* Dark mode styles */
-.dark-mode .chat-container {
-  background-color: var(--chat-bg-color);
-}
-
-.dark-mode .chat-header {
-  background-color: var(--header-bg-color);
-  color: var(--header-text-color);
-}
-
-.dark-mode .message.user .message-content {
-  background-color: var(--message-user-bg);
-  color: var(--message-user-text);
-}
-
-.dark-mode .message.ai .message-content {
-  background-color: var(--message-ai-bg);
-  color: var(--message-ai-text);
-}
-
-.dark-mode .input-container {
-  border-top: 1px solid var(--border-color);
-  background-color: var(--input-bg-color);
-}
-
-.dark-mode .input-container input {
+.theme-selector-container select {
+  padding: 8px 12px;
+  border-radius: 5px;
   border: 1px solid var(--input-border-color);
   background-color: var(--input-bg-color);
   color: var(--message-ai-text);
+  font-size: 0.9rem;
+  cursor: pointer;
+  appearance: none; /* Remove default dropdown arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2C197.3L159.3%2C69.6c-3.6-3.6-8.6-5.6-13.7-5.6s-10.1%2C2-13.7%2C5.6L5.4%2C197.3c-7.3%2C7.3-7.3%2C19.1%2C0%2C26.4c3.6%2C3.6%2C8.6%2C5.6%2C13.7%2C5.6s10.1-2%2C13.7-5.6l120.7-120.7l120.7%2C120.7c3.6%2C3.6%2C8.6%2C5.6%2C13.7%2C5.6s10.1-2%2C13.7-5.6C294.3%2C216.4%2C294.3%2C204.6%2C287%2C197.3z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 12px;
+  padding-right: 30px; /* Make space for the custom arrow */
 }
 
-.dark-mode .welcome-message {
-  color: var(--welcome-text-color);
+.theme-selector-container select:focus {
+  outline: 2px solid var(--header-bg-color);
+  outline-offset: 2px;
 }
 
-.dark-mode .input-container button {
-  background-color: var(--header-bg-color);
-  color: white;
-}
-
-.dark-mode .input-container button:hover:not(:disabled) {
-  background-color: #3a5a80;
-}
-
-.dark-mode .message-time {
-  opacity: 0.7;
-}
-
-.dark-mode .typing-indicator span {
-  background-color: var(--typing-indicator-color);
-}
-
-.dark-mode .collapsible-thoughts {
-  border-left: 3px solid var(--thoughts-border-color);
-  background-color: var(--thoughts-bg-color);
-}
-
-.dark-mode .collapsible-thoughts summary {
-  color: var(--thoughts-summary-color);
-}
-
-.dark-mode .collapsible-thoughts .thoughts-content {
-  background-color: var(--thoughts-content-bg);
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }

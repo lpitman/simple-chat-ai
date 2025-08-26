@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import './ChatContainer.css';
+import { themes } from './themes'; // Import themes to get theme names
 
 // Update the Message interface to match the one in src/App.tsx
 interface Message {
@@ -23,8 +24,8 @@ const ChatContainer: React.FC<{
   handleSubmit: (e: React.FormEvent) => void;
   formatTime: (date: Date) => string;
   renderMessageContent: (message: Message) => React.ReactNode;
-  darkMode?: boolean;
-  toggleDarkMode?: () => void;
+  currentThemeName: string; // Changed from darkMode
+  setTheme: (themeName: string) => void; // New prop for setting theme
 }> = ({ 
   messages, 
   inputValue, 
@@ -33,8 +34,8 @@ const ChatContainer: React.FC<{
   handleSubmit, 
   formatTime, 
   renderMessageContent,
-  darkMode,
-  toggleDarkMode
+  currentThemeName, // Use currentThemeName
+  setTheme // Use setTheme
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -46,20 +47,25 @@ const ChatContainer: React.FC<{
     scrollToBottom();
   }, [messages]);
 
+  const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setTheme(e.target.value);
+  };
+
   return (
     <div className="chat-container">
       <div className="chat-header">
         <h1>AI Chat</h1>
         <p>Powered by Ollama Qwen3</p>
-        {toggleDarkMode && (
-          <button 
-            className="dark-mode-toggle"
-            onClick={toggleDarkMode}
-            aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-          >
-            {darkMode ? "☀️" : "🌙"}
-          </button>
-        )}
+        <div className="theme-selector-container">
+          <label htmlFor="theme-select" className="visually-hidden">Select Theme:</label>
+          <select id="theme-select" onChange={handleThemeChange} value={currentThemeName}>
+            {Object.keys(themes).map((themeName) => (
+              <option key={themeName} value={themeName}>
+                {themeName.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
       
       <div className="messages-container">

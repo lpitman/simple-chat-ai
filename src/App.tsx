@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ChatContainer from './ChatContainer';
 import MessageContent from './MessageContent';
 import './App.css';
+import { themes, ThemeColors } from './themes'; // Import themes and ThemeColors interface
 
 // Define the Message type to include both UI display properties and Ollama API properties
 interface Message {
@@ -22,20 +23,22 @@ const App: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]); // Use the new Message type
   const [inputValue, setInputValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [darkMode, setDarkMode] = useState<boolean>(() => {
-    const savedMode = localStorage.getItem('darkMode');
-    return savedMode ? JSON.parse(savedMode) : false;
+  const [currentThemeName, setCurrentThemeName] = useState<string>(() => {
+    const savedTheme = localStorage.getItem('selectedTheme');
+    // Default to 'light' if no theme is saved or if the saved theme is not found
+    return savedTheme && themes[savedTheme] ? savedTheme : 'light';
   });
 
-  // Apply dark mode class to body
+  // Apply theme CSS variables to the body
   useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add('dark-mode');
-    } else {
-      document.body.classList.remove('dark-mode');
+    const selectedThemeColors: ThemeColors = themes[currentThemeName];
+    if (selectedThemeColors) {
+      for (const [property, value] of Object.entries(selectedThemeColors)) {
+        document.body.style.setProperty(property, value);
+      }
     }
-    localStorage.setItem('darkMode', JSON.stringify(darkMode));
-  }, [darkMode]);
+    localStorage.setItem('selectedTheme', currentThemeName);
+  }, [currentThemeName]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,8 +137,8 @@ const App: React.FC = () => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
+  const setTheme = (themeName: string) => {
+    setCurrentThemeName(themeName);
   };
 
   // Create a proper render function that doesn't use hooks directly
@@ -154,8 +157,8 @@ const App: React.FC = () => {
         handleSubmit={handleSubmit}
         formatTime={formatTime}
         renderMessageContent={renderMessageContent}
-        darkMode={darkMode}
-        toggleDarkMode={toggleDarkMode}
+        currentThemeName={currentThemeName} // Pass current theme name
+        setTheme={setTheme} // Pass set theme function
       />
     </div>
   );
