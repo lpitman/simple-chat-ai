@@ -37,9 +37,9 @@ const App: React.FC = () => {
       // In development, use localhost:3001 as the backend runs on a different port
       backendBaseUrl = 'http://localhost:3001';
     } else {
-      // In production, assume the API is proxied under /api on the same host and port
-      // as the frontend. window.location.host includes the port if it's not default (e.g., :5173).
-      backendBaseUrl = `${window.location.protocol}//${window.location.host}`;
+      // In production, assume the API is proxied under /api on the same host and port.
+      // An empty string means a relative path, e.g., /api/generate
+      backendBaseUrl = ''; 
     }
 
     // Add user message
