@@ -69,8 +69,9 @@ const App: React.FC = () => {
     // Determine the backend base URL dynamically
     let backendBaseUrl: string;
     if (import.meta.env.DEV) {
-      // In development, use localhost:3001 as the backend runs on a different port
-      backendBaseUrl = 'http://localhost:3001';
+      // In development, use the environment variable VITE_BACKEND_URL_DEV,
+      // falling back to localhost if not set.
+      backendBaseUrl = import.meta.env.VITE_BACKEND_URL_DEV || 'http://localhost:3001';
     } else {
       // In production, assume the API is proxied under /api on the same host and port.
       // An empty string means a relative path, e.g., /api/chat
