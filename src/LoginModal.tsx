@@ -80,6 +80,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
             {isLoading ? 'Logging in...' : 'Login'}
           </button>
         </form>
+        <p className="guest-access-note">Ask Logan for guest account access!</p>
       </div>
     </div>
   );
