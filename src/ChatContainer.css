@@ -266,10 +266,9 @@
   height: 24px;
 }
 
-/* New styles for images within chat messages */
 .message-content img {
     max-width: 100%; /* Ensure image is responsive and doesn't overflow its container */
-    height: auto;    /* Maintain aspect ratio */
+    height: 350px;    /* Maintain aspect ratio */
     border-radius: 8px; /* Apply rounded corners */
     display: block;  /* Make image a block element for margin auto to work */
     margin: 10px auto; /* Center the image and add some vertical spacing */
