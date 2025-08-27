@@ -22,6 +22,10 @@ This application is built using a robust and modern technology stack:
     *   **Node.js (Express)**: A fast, unopinionated, minimalist web framework for Node.js, used to create the API server.
     *   **Ollama Client (`ollama` npm package)**: Facilitates communication with the local Ollama instance.
     *   **`wikijs`**: A Node.js library used to interact with the Wikipedia API for the tool-calling example.
+    *   **`sqlite3`**: A lightweight, file-based database for storing user credentials.
+    *   **`jsonwebtoken`**: For implementing JWT (JSON Web Token) based authentication.
+    *   **`bcryptjs`**: For securely hashing user passwords.
+    *   **`dotenv`**: For loading environment variables from a `.env` file.
 *   **AI Runtime**:
     *   **Ollama**: A powerful tool for running large language models locally. The backend connects to an Ollama instance, which can be running on the same machine or a separate server (e.g., `logan-linux.tailnet.internal:11434` in this setup).
 *   **Infrastructure (for Production Deployment)**:
@@ -34,6 +38,8 @@ This application is built using a robust and modern technology stack:
 *   **Local AI Inference**: All AI processing is handled by your local Ollama instance, ensuring data privacy and offline capability.
 *   **Extensible Tool-Calling**: The backend is designed to allow easy integration of new tools. The current implementation includes:
     *   **Wikipedia Search Tool**: The AI can automatically query Wikipedia for information when prompted (e.g., "Search Wikipedia for quantum physics" or "Wikipedia: Eiffel Tower").
+    *   **Weather Tool**: The AI can fetch current weather conditions for a specified location using Open-Meteo API.
+*   **Authentication**: Secure access to the chat functionality using JWT (JSON Web Token) based authentication.
 *   **Dark Mode**: A toggle for switching between light and dark themes for improved user experience.
 *   **Modular Backend**: The backend is structured with separate files for tools and API routes, promoting maintainability and scalability.
 
@@ -68,13 +74,33 @@ To run this project locally for development:
     npm install
     cd ..
     ```
-4.  **Start the Backend Server**:
+4.  **Authentication Setup (Environment Variables)**:
+    The backend now requires environment variables for JWT secret and initial user credentials.
+    *   Create a `.env` file in the root directory of the project (same level as `package.json` and `backend/`).
+    *   Copy the contents of `.env.example` into your new `.env` file.
+    *   **`JWT_SECRET`**: Generate a strong, random string for this. You can use `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` in your terminal to get one.
+    *   **`INITIAL_USERNAME`** and **`INITIAL_PASSWORD`**: Set these to your desired username and password for the primary admin account.
+    *   **`GUEST_USERNAME`** and **`GUEST_PASSWORD` (Optional)**: Uncomment and set these if you wish to have a separate guest account.
+    
+    Example `.env` file:
+    ```
+    JWT_SECRET=your_super_secret_jwt_key_here_generated_randomly
+    INITIAL_USERNAME=admin
+    INITIAL_PASSWORD=mySecurePassword123
+
+    # GUEST_USERNAME=guest
+    # GUEST_PASSWORD=guestPass
+    ```
+    
+    *Note*: The `backend/db.js` script will automatically create a `database.sqlite` file and populate the `users` table with these credentials the first time the backend server starts.
+
+5.  **Start the Backend Server**:
     ```bash
     cd backend
     npm start
     ```
-    The backend will start on `http://localhost:3001`.
-5.  **Start the Frontend Development Server**:
+    The backend will start on `http://localhost:3001`. You should see messages in the console indicating database connection and user creation (if applicable).
+6.  **Start the Frontend Development Server**:
     Open a new terminal window, navigate back to the project root (`simple-chat-ai`), and run:
     ```bash
     npm run dev -- --host
@@ -144,11 +170,16 @@ RestartSec=5
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=simple-chat-ai-backend
+Environment="JWT_SECRET=your_super_secret_jwt_key_here"
+Environment="INITIAL_USERNAME=admin"
+Environment="INITIAL_PASSWORD=mySecurePassword123"
+# Environment="GUEST_USERNAME=guest"
+# Environment="GUEST_PASSWORD=guestPass"
 
 [Install]
 WantedBy=multi-user.target
 ```
-Remember to `sudo systemctl daemon-reload`, `sudo systemctl enable simple-chat-ai-backend.service`, and `sudo systemctl start simple-chat-ai-backend.service` after setting this up.
+Remember to `sudo systemctl daemon-reload`, `sudo systemctl enable simple-chat-ai-backend.service`, and `sudo systemctl start simple-chat-ai-backend.service` after setting this up. **Crucially, for production, you should set your environment variables directly in the systemd service file or via a secure method like `/etc/environment` or a separate environment file referenced by systemd, rather than relying on a `.env` file.**
 
 ### Deployment Script
 
@@ -167,7 +198,7 @@ A separate deployment script (not part of this repository) is recommended for au
 To add new tool-calling capabilities:
 1.  **Create a new tool file** in `backend/tools/` (e.g., `myNewTool.js`).
 2.  **Implement the tool's function**: This function should perform the external action (e.g., fetching weather data, interacting with a database).
-3.  **Define the tool for Ollama**: Create an object describing the tool's `name`, `description`, and `parameters` in the format specified by Ollama's tool-calling API.
+3.  **Define the tool's schema for Ollama**: Create an object describing the tool's `name`, `description`, and `parameters` in the format specified by Ollama's tool-calling API.
 4.  **Export the function and definition** from the tool file.
 5.  **Import the new tool** into `backend/routes/chat.js`.
 6.  **Add the tool's function to `availableFunctions`** and its definition to the `tools` array passed to `ollamaClient.chat()`.
