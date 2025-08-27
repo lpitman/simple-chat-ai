@@ -1,6 +1,7 @@
 // src/hooks/useChat.ts
 import { useState } from 'react';
-import { Message } from '../types/chat'; // Import Message interface
+import type { Message } from '../types/chat'; // Import Message interface
+ // Import Message interface
 
 interface UseChatProps {
   isAuthenticated: boolean;
@@ -18,7 +19,7 @@ export const useChat = ({ isAuthenticated, setIsAuthenticated, disableAuth }: Us
     if (!inputValue.trim() || isLoading) return;
 
     let token: string | null = null;
-    if (!disableAuth) {
+    if (!disableAuth && isAuthenticated) { 
       token = localStorage.getItem('jwtToken');
       if (!token) {
         console.error('No authentication token found. Please log in.');

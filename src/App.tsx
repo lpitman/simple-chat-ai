@@ -4,7 +4,8 @@ import LoginModal from './LoginModal';
 import MessageContent from './MessageContent'; // Still needed for renderMessageContent
 import { useChat } from './hooks/useChat'; // Import the new chat hook
 import { useTheme } from './hooks/useTheme'; // Import the new theme hook
-import { Message } from './types/chat'; // Import Message interface
+import type { Message } from './types/chat'; // Import Message interface
+ // Import Message interface
 import './App.css';
 
 // Determine if authentication is disabled via environment variable
