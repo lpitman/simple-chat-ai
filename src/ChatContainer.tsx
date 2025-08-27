@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
 import './ChatContainer.css';
-import { themes } from './themes'; // Import themes to get theme names
 import SettingsModal from './SettingsModal'; // Import the new SettingsModal
 
 // Update the Message interface to match the one in src/App.tsx
