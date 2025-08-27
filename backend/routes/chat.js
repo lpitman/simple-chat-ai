@@ -1,14 +1,12 @@
 const express = require('express');
 const { search_wikipedia, wikipediaToolDefinition } = require('../tools/wikipediaTool');
 const { get_current_weather, weatherToolDefinition } = require('../tools/weatherTool');
-const { scrape_web_page, webScrapeToolDefinition } = require('../tools/webScrapeTool'); // Assuming you have this from previous steps
 const { search_mtg_card, mtgToolDefinition } = require('../tools/mtgTool'); // Import the new MTG tool
 
 // Map tool names to their corresponding functions
 const availableFunctions = {
     search_wikipedia: search_wikipedia,
     get_current_weather: get_current_weather,
-    scrape_web_page: scrape_web_page, // Add the web scrape tool function
     search_mtg_card: search_mtg_card, // Add the new MTG tool function
 };
 
@@ -29,7 +27,7 @@ module.exports = (ollamaClient) => {
             const response = await ollamaClient.chat({ // Use the passed ollamaClient
                 model: model,
                 messages: messages,
-                tools: [wikipediaToolDefinition, weatherToolDefinition, webScrapeToolDefinition, mtgToolDefinition], // Provide all tools to Ollama
+                tools: [wikipediaToolDefinition, weatherToolDefinition, mtgToolDefinition], // Provide all tools to Ollama
             });
 
             const responseMessage = response.message;
