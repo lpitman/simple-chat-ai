@@ -51,6 +51,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
   return (
     <div className="login-modal-overlay">
       <div className="login-modal-content">
+        <p className="guest-access-note">Ask Logan for guest account access!</p>
         <h2>Login to AI Chat</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -80,7 +81,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
             {isLoading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-        <p className="guest-access-note">Ask Logan for guest account access!</p>
       </div>
     </div>
   );
