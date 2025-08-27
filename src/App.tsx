@@ -24,13 +24,16 @@ interface Message {
   tool_call_id?: string;
 }
 
+// Determine if authentication is disabled via environment variable
+const DISABLE_AUTH = import.meta.env.VITE_DISABLE_AUTH === 'true';
+
 const App: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]); // Use the new Message type
   const [inputValue, setInputValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    // Check for JWT token in localStorage on initial load
-    return !!localStorage.getItem('jwtToken');
+    // If auth is disabled, always consider authenticated. Otherwise, check for token.
+    return DISABLE_AUTH || !!localStorage.getItem('jwtToken');
   });
   const [currentThemeName, setCurrentThemeName] = useState<string>(() => {
     const savedTheme = localStorage.getItem('selectedTheme');
@@ -53,12 +56,14 @@ const App: React.FC = () => {
     e.preventDefault();
     if (!inputValue.trim() || isLoading) return;
 
-    const token = localStorage.getItem('jwtToken');
-    if (!token) {
-      // Should not happen if isAuthenticated is true, but good for safety
-      console.error('No authentication token found. Please log in.');
-      setIsAuthenticated(false); // Force re-login
-      return;
+    let token: string | null = null;
+    if (!DISABLE_AUTH) {
+      token = localStorage.getItem('jwtToken');
+      if (!token) {
+        console.error('No authentication token found. Please log in.');
+        setIsAuthenticated(false); // Force re-login
+        return;
+      }
     }
 
     // Determine the backend base URL dynamically
@@ -102,22 +107,25 @@ const App: React.FC = () => {
       // Add the current user message to the history for Ollama
       messagesForOllama.push({ role: newUserMessage.role, content: newUserMessage.content });
 
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+      if (token) { // Only add Authorization header if token exists (i.e., auth is enabled)
+        headers['Authorization'] = `Bearer ${token}`;
+      }
 
       // Send request to the new backend endpoint /api/chat
       const response = await fetch(`${backendBaseUrl}/api/chat`, { // Changed URL to /api/chat
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // Include the JWT token
-        },
+        headers: headers,
         body: JSON.stringify({
           messages: messagesForOllama, // Send the full message history
           // model and stream are now handled by the backend
         })
       });
 
-      if (response.status === 401 || response.status === 403) {
-        // Token expired or invalid, force re-login
+      if (!DISABLE_AUTH && (response.status === 401 || response.status === 403)) {
+        // Token expired or invalid, force re-login (only if auth is enabled)
         localStorage.removeItem('jwtToken');
         setIsAuthenticated(false);
         console.error('Authentication failed. Please log in again.');
@@ -168,13 +176,17 @@ const App: React.FC = () => {
   };
 
   const handleLoginSuccess = () => {
-    setIsAuthenticated(true);
+    if (!DISABLE_AUTH) { // Only set isAuthenticated if auth is enabled
+      setIsAuthenticated(true);
+    }
     setMessages([]); // Clear messages on successful login
   };
 
   const handleLogout = () => {
     localStorage.removeItem('jwtToken');
-    setIsAuthenticated(false);
+    if (!DISABLE_AUTH) { // Only set isAuthenticated if auth is enabled
+      setIsAuthenticated(false);
+    }
     setMessages([]); // Clear messages on logout
   };
 
@@ -186,7 +198,7 @@ const App: React.FC = () => {
 
   return (
     <div className="app">
-      {!isAuthenticated ? (
+      {!isAuthenticated && !DISABLE_AUTH ? ( // Only show LoginModal if not authenticated AND auth is not disabled
         <LoginModal onLoginSuccess={handleLoginSuccess} />
       ) : (
         <ChatContainer 

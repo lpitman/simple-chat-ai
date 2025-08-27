@@ -13,6 +13,12 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const app = express();
 const port = 3001;
 
+// Determine if authentication is disabled
+const DISABLE_AUTH = process.env.DISABLE_AUTH === 'true';
+if (DISABLE_AUTH) {
+    console.warn('Authentication is DISABLED via environment variable. All chat API calls will bypass authentication.');
+}
+
 // Initialize Ollama client with the specified host
 const ollama = new Ollama({ host: 'http://logan-linux.tailnet.internal:11434' });
 
@@ -20,12 +26,17 @@ const ollama = new Ollama({ host: 'http://logan-linux.tailnet.internal:11434' })
 app.use(cors());
 app.use(express.json());
 
-// Mount the authentication router
+// Mount the authentication router (always available for login/registration)
 app.use('/api/auth', authRouter);
 
-// Mount the chat router, protected by authentication middleware
-// All requests to /api/chat will be handled by chatRouter, but only after token verification
-app.use('/api/chat', authenticateToken, chatRouter(ollama)); // Pass the ollama client to the router
+// Mount the chat router
+// Conditionally apply the authentication middleware
+if (DISABLE_AUTH) {
+    app.use('/api/chat', chatRouter(ollama)); // No authentication middleware
+} else {
+    app.use('/api/chat', authenticateToken, chatRouter(ollama)); // Protected by authentication middleware
+}
+
 
 // Start the server
 app.listen(port, () => {

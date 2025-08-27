@@ -11,7 +11,9 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET) {
     console.error('JWT_SECRET is not defined in environment variables. Authentication routes will not work.');
-    process.exit(1); // Exit if critical environment variable is missing
+    // In a production environment, you might want to exit here.
+    // For development, we'll allow it to proceed but log a warning.
+    // process.exit(1); 
 }
 
 const router = express.Router();
@@ -38,6 +40,9 @@ router.post('/login', (req, res) => {
         }
 
         // User authenticated, generate JWT
+        if (!JWT_SECRET) {
+            return res.status(500).json({ error: 'Server misconfiguration: JWT secret not set.' });
+        }
         const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' }); // Token expires in 1 hour
         res.json({ token });
     });
