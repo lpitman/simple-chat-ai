@@ -1,9 +1,11 @@
 const express = require('express');
 const { search_wikipedia, wikipediaToolDefinition } = require('../tools/wikipediaTool');
+const { get_current_weather, weatherToolDefinition } = require('../tools/weatherTool'); // Import the new weather tool
 
 // Map tool names to their corresponding functions
 const availableFunctions = {
     search_wikipedia: search_wikipedia,
+    get_current_weather: get_current_weather, // Add the new weather tool function
 };
 
 // Export a function that takes the ollama client as an argument
@@ -23,7 +25,7 @@ module.exports = (ollamaClient) => {
             const response = await ollamaClient.chat({ // Use the passed ollamaClient
                 model: model,
                 messages: messages,
-                tools: [wikipediaToolDefinition], // Provide the tools to Ollama
+                tools: [wikipediaToolDefinition, weatherToolDefinition], // Provide all tools to Ollama
             });
 
             const responseMessage = response.message;
