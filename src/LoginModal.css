@@ -1,0 +1,88 @@
+.login-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; /* Higher than other modals */
+}
+
+.login-modal-content {
+  background-color: var(--chat-bg-color);
+  border-radius: 10px;
+  padding: 30px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  color: var(--message-ai-text);
+}
+
+.login-modal-content h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: var(--header-bg-color);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: var(--thoughts-summary-color);
+}
+
+.form-group input {
+  width: calc(100% - 24px); /* Account for padding */
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--input-border-color);
+  background-color: var(--input-bg-color);
+  color: var(--message-ai-text);
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+  border-color: var(--header-bg-color);
+  outline: none;
+}
+
+.login-modal-content button {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--button-bg-color);
+  color: var(--button-text-color);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  margin-top: 20px;
+}
+
+.login-modal-content button:hover:not(:disabled) {
+  background-color: #3a5a80; /* Slightly darker hover for user button */
+}
+
+.login-modal-content button:disabled {
+  background-color: var(--button-disabled-bg-color);
+  color: var(--button-disabled-text-color);
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #e74c3c; /* Red for errors */
+  text-align: center;
+  margin-top: 15px;
+  font-size: 0.9rem;
+}

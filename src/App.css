@@ -17,6 +17,12 @@
   --thoughts-bg-color: rgba(74, 111, 165, 0.05);
   --thoughts-content-bg: rgba(0, 0, 0, 0.03);
   --thoughts-summary-color: #4a6fa5;
+
+  /* Button variables for login modal */
+  --button-bg-color: #4a6fa5;
+  --button-text-color: white;
+  --button-disabled-bg-color: #a0a0a0;
+  --button-disabled-text-color: #e0e0e0;
 }
 
 .dark-mode {
@@ -37,6 +43,12 @@
   --thoughts-bg-color: rgba(74, 111, 165, 0.1);
   --thoughts-content-bg: rgba(255, 255, 255, 0.05);
   --thoughts-summary-color: #6a8aa5;
+
+  /* Button variables for login modal (dark mode) */
+  --button-bg-color: #6a8aa5;
+  --button-text-color: white;
+  --button-disabled-bg-color: #505050;
+  --button-disabled-text-color: #b0b0b0;
 }
 
 * {
@@ -55,6 +67,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 100vh; /* Ensure body takes full viewport height */
 }
 
 .app {
@@ -64,4 +77,23 @@ body {
   align-items: center;
   padding: 20px;
   width: 100%;
+}
+
+/* Logout button specific styles */
+.logout-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: var(--button-bg-color);
+  color: var(--button-text-color);
+  border: none;
+  border-radius: 24px;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #3a5a80; /* Darker shade on hover */
 }

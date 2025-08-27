@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ChatContainer from './ChatContainer';
 import MessageContent from './MessageContent';
+import LoginModal from './LoginModal'; // Import the new LoginModal
 import './App.css';
 import { themes } from './themes'; // Only import the runtime value 'themes'
 
@@ -27,6 +28,10 @@ const App: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]); // Use the new Message type
   const [inputValue, setInputValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    // Check for JWT token in localStorage on initial load
+    return !!localStorage.getItem('jwtToken');
+  });
   const [currentThemeName, setCurrentThemeName] = useState<string>(() => {
     const savedTheme = localStorage.getItem('selectedTheme');
     // Default to 'light' if no theme is saved or if the saved theme is not found
@@ -47,6 +52,14 @@ const App: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || isLoading) return;
+
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+      // Should not happen if isAuthenticated is true, but good for safety
+      console.error('No authentication token found. Please log in.');
+      setIsAuthenticated(false); // Force re-login
+      return;
+    }
 
     // Determine the backend base URL dynamically
     let backendBaseUrl: string;
@@ -94,13 +107,22 @@ const App: React.FC = () => {
       const response = await fetch(`${backendBaseUrl}/api/chat`, { // Changed URL to /api/chat
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // Include the JWT token
         },
         body: JSON.stringify({
           messages: messagesForOllama, // Send the full message history
           // model and stream are now handled by the backend
         })
       });
+
+      if (response.status === 401 || response.status === 403) {
+        // Token expired or invalid, force re-login
+        localStorage.removeItem('jwtToken');
+        setIsAuthenticated(false);
+        console.error('Authentication failed. Please log in again.');
+        return; // Stop further processing
+      }
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -145,6 +167,17 @@ const App: React.FC = () => {
     setCurrentThemeName(themeName);
   };
 
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
+    setMessages([]); // Clear messages on successful login
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('jwtToken');
+    setIsAuthenticated(false);
+    setMessages([]); // Clear messages on logout
+  };
+
   // Create a proper render function that doesn't use hooks directly
   const renderMessageContent = (message: Message) => {
     // MessageContent expects { text: string }, so we pass the 'text' property
@@ -153,17 +186,22 @@ const App: React.FC = () => {
 
   return (
     <div className="app">
-      <ChatContainer 
-        messages={messages}
-        inputValue={inputValue}
-        isLoading={isLoading}
-        setInputValue={setInputValue}
-        handleSubmit={handleSubmit}
-        formatTime={formatTime}
-        renderMessageContent={renderMessageContent}
-        currentThemeName={currentThemeName} // Pass current theme name
-        setTheme={setTheme} // Pass set theme function
-      />
+      {!isAuthenticated ? (
+        <LoginModal onLoginSuccess={handleLoginSuccess} />
+      ) : (
+        <ChatContainer 
+          messages={messages}
+          inputValue={inputValue}
+          isLoading={isLoading}
+          setInputValue={setInputValue}
+          handleSubmit={handleSubmit}
+          formatTime={formatTime}
+          renderMessageContent={renderMessageContent}
+          currentThemeName={currentThemeName} // Pass current theme name
+          setTheme={setTheme} // Pass set theme function
+          onLogout={handleLogout} // Pass logout function
+        />
+      )}
     </div>
   );
 };
