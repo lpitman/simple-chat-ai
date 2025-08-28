@@ -11,66 +11,91 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
         console.error('Error connecting to SQLite database:', err.message);
     } else {
         console.log('Connected to the SQLite database.');
-        db.run(`CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-        )`, (err) => {
-            if (err) {
-                console.error('Error creating users table:', err.message);
-            } else {
-                console.log('Users table checked/created.');
-                // Check if initial user exists and create if not
-                db.get("SELECT COUNT(*) AS count FROM users WHERE username = ?", [process.env.INITIAL_USERNAME], async (err, row) => {
-                    if (err) {
-                        console.error('Error checking initial user:', err.message);
-                        return;
-                    }
-                    if (row.count === 0) {
-                        const initialUsername = process.env.INITIAL_USERNAME;
-                        const initialPassword = process.env.INITIAL_PASSWORD;
-                        if (initialUsername && initialPassword) {
-                            const hashedPassword = await bcrypt.hash(initialPassword, 10);
-                            db.run("INSERT INTO users (username, password) VALUES (?, ?)", [initialUsername, hashedPassword], (err) => {
-                                if (err) {
-                                    console.error('Error inserting initial user:', err.message);
-                                } else {
-                                    console.log(`Initial user '${initialUsername}' created.`);
-                                }
-                            });
-                        } else {
-                            console.warn('INITIAL_USERNAME or INITIAL_PASSWORD not set in .env. Skipping initial user creation.');
-                        }
-                    } else {
-                        console.log(`Initial user '${process.env.INITIAL_USERNAME}' already exists.`);
-                    }
-                });
-
-                // Check if guest user exists and create if not (if enabled)
-                if (process.env.GUEST_USERNAME && process.env.GUEST_PASSWORD) {
-                    db.get("SELECT COUNT(*) AS count FROM users WHERE username = ?", [process.env.GUEST_USERNAME], async (err, row) => {
+        db.serialize(() => { // Use serialize to ensure commands run in order
+            db.run(`CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL
+            )`, (err) => {
+                if (err) {
+                    console.error('Error creating users table:', err.message);
+                } else {
+                    console.log('Users table checked/created.');
+                    // Check if initial user exists and create if not
+                    db.get("SELECT COUNT(*) AS count FROM users WHERE username = ?", [process.env.INITIAL_USERNAME], async (err, row) => {
                         if (err) {
-                            console.error('Error checking guest user:', err.message);
+                            console.error('Error checking initial user:', err.message);
                             return;
                         }
                         if (row.count === 0) {
-                            const guestUsername = process.env.GUEST_USERNAME;
-                            const guestPassword = process.env.GUEST_PASSWORD;
-                            const hashedPassword = await bcrypt.hash(guestPassword, 10);
-                            db.run("INSERT INTO users (username, password) VALUES (?, ?)", [guestUsername, hashedPassword], (err) => {
-                                if (err) {
-                                    console.error('Error inserting guest user:', err.message);
-                                } else {
-                                    console.log(`Guest user '${guestUsername}' created.`);
-                                }
-                            });
+                            const initialUsername = process.env.INITIAL_USERNAME;
+                            const initialPassword = process.env.INITIAL_PASSWORD;
+                            if (initialUsername && initialPassword) {
+                                const hashedPassword = await bcrypt.hash(initialPassword, 10);
+                                db.run("INSERT INTO users (username, password) VALUES (?, ?)", [initialUsername, hashedPassword], (err) => {
+                                    if (err) {
+                                        console.error('Error inserting initial user:', err.message);
+                                    } else {
+                                        console.log(`Initial user '${initialUsername}' created.`);
+                                    }
+                                });
+                            } else {
+                                console.warn('INITIAL_USERNAME or INITIAL_PASSWORD not set in .env. Skipping initial user creation.');
+                            }
                         } else {
-                            console.log(`Guest user '${process.env.GUEST_USERNAME}' already exists.`);
+                            console.log(`Initial user '${process.env.INITIAL_USERNAME}' already exists.`);
                         }
                     });
+
+                    // Check if guest user exists and create if not (if enabled)
+                    if (process.env.GUEST_USERNAME && process.env.GUEST_PASSWORD) {
+                        db.get("SELECT COUNT(*) AS count FROM users WHERE username = ?", [process.env.GUEST_USERNAME], async (err, row) => {
+                            if (err) {
+                                console.error('Error checking guest user:', err.message);
+                                return;
+                            }
+                            if (row.count === 0) {
+                                const guestUsername = process.env.GUEST_USERNAME;
+                                const guestPassword = process.env.GUEST_PASSWORD;
+                                const hashedPassword = await bcrypt.hash(guestPassword, 10);
+                                db.run("INSERT INTO users (username, password) VALUES (?, ?)", [guestUsername, hashedPassword], (err) => {
+                                    if (err) {
+                                        console.error('Error inserting guest user:', err.message);
+                                    } else {
+                                        console.log(`Guest user '${guestUsername}' created.`);
+                                    }
+                                });
+                            } else {
+                                console.log(`Guest user '${process.env.GUEST_USERNAME}' already exists.`);
+                            }
+                        });
+                    }
                 }
-            }
-        });
+            });
+
+            // Create rate_limits table
+            db.run(`CREATE TABLE IF NOT EXISTS rate_limits (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                timestamp INTEGER NOT NULL,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )`, (err) => {
+                if (err) {
+                    console.error('Error creating rate_limits table:', err.message);
+                } else {
+                    console.log('Rate limits table checked/created.');
+                }
+            });
+
+            // Create index for faster queries on rate_limits
+            db.run(`CREATE INDEX IF NOT EXISTS idx_rate_limits_user_timestamp ON rate_limits (user_id, timestamp);`, (err) => {
+                if (err) {
+                    console.error('Error creating index on rate_limits:', err.message);
+                } else {
+                    console.log('Index on rate_limits checked/created.');
+                }
+            });
+        }); // End serialize
     }
 });
 
