@@ -132,11 +132,11 @@ export const useChat = ({ isAuthenticated, setIsAuthenticated, disableAuth }: Us
       console.error('Error:', error);
       const errorMessage: Message = {
         id: Date.now() + 1,
-        text: `Sorry, I encountered an error: ${error instanceof Error ? error.message : String(error)}. Please try again.`,
+        text: `Sorry, I encountered an error: ${error instanceof Error ? error.message : String(error)}. Please try again later.`,
         sender: 'ai',
         timestamp: new Date(),
         role: 'assistant',
-        content: `Sorry, I encountered an error: ${error instanceof Error ? error.message : String(error)}. Please try again.`,
+        content: `Sorry, I encountered an error: ${error instanceof Error ? error.message : String(error)}. Please try again later.`,
       };
       setMessages(prev => [...prev, errorMessage]);
       // Do not clear inputValue if there was an error, so user can retry or edit

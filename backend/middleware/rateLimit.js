@@ -28,7 +28,7 @@ const rateLimit = (req, res, next) => {
 
         if (requestCount >= GUEST_USER_RATE_LIMIT) {
             console.warn(`Guest user ${GUEST_USERNAME} (ID: ${userId}) exceeded rate limit.`);
-            return res.status(429).json({ error: `Too many requests. You can make ${GUEST_USER_RATE_LIMIT} requests per hour. Please try again later.` });
+            return res.status(429).json({ error: `Too many requests. You can make ${GUEST_USER_RATE_LIMIT} requests per hour.` });
         }
 
         // Record the current request
