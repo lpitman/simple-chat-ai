@@ -115,7 +115,7 @@ const ChatContainer: React.FC<{
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="Type your message here..."
           disabled={isLoading}
-          ref={inputRef} {/* Attach the ref here */}
+          ref={inputRef}
         />
         <button type="submit" disabled={isLoading || !inputValue.trim()}>
           Send
