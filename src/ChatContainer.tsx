@@ -40,6 +40,7 @@ const ChatContainer: React.FC<{
   onLogout // Destructure new prop
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null); // Create a ref for the input field
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false); // State for modal visibility
 
   const scrollToBottom = () => {
@@ -49,6 +50,13 @@ const ChatContainer: React.FC<{
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Effect to focus the input field when isLoading becomes false
+  useEffect(() => {
+    if (!isLoading && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isLoading]);
 
   return (
     <div className="chat-container">
@@ -107,6 +115,7 @@ const ChatContainer: React.FC<{
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="Type your message here..."
           disabled={isLoading}
+          ref={inputRef} {/* Attach the ref here */}
         />
         <button type="submit" disabled={isLoading || !inputValue.trim()}>
           Send
