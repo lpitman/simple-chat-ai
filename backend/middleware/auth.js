@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 const path = require('path');
 
-// Load environment variables from .env file
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -28,7 +27,7 @@ const authenticateToken = (req, res, next) => {
             console.error('JWT verification failed:', err.message);
             return res.status(403).json({ error: 'Invalid or expired token.' });
         }
-        req.user = user; // Attach user payload to the request
+        req.user = user;
         next();
     });
 };

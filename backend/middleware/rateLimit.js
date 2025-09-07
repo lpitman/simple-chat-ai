@@ -1,7 +1,6 @@
-const db = require('../db'); // Import the database connection
+const db = require('../db');
 const path = require('path');
 
-// Load environment variables from .env file
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 
 const GUEST_USERNAME = process.env.GUEST_USERNAME;
@@ -31,7 +30,6 @@ const rateLimit = (req, res, next) => {
             return res.status(429).json({ error: `Too many requests. You can make ${GUEST_USER_RATE_LIMIT} requests per hour.` });
         }
 
-        // Record the current request
         db.run("INSERT INTO rate_limits (user_id, timestamp) VALUES (?, ?)", [userId, currentTime], function(insertErr) {
             if (insertErr) {
                 console.error('Error inserting rate limit entry:', insertErr.message);
