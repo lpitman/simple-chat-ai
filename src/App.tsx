@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import ChatContainer from './ChatContainer';
 import LoginModal from './LoginModal';
-import MessageContent from './MessageContent'; // Still needed for renderMessageContent
-import { useChat } from './hooks/useChat'; // Import the new chat hook
-import { useTheme } from './hooks/useTheme'; // Import the new theme hook
-import type { Message } from './types/chat'; // Import Message interface
- // Import Message interface
+import MessageContent from './MessageContent'; 
+import { useChat } from './hooks/useChat'; 
+import { useTheme } from './hooks/useTheme'; 
+import type { Message } from './types/chat'; 
 import './App.css';
 
 // Determine if authentication is disabled via environment variable
@@ -17,10 +16,8 @@ const App: React.FC = () => {
     return DISABLE_AUTH || !!localStorage.getItem('jwtToken');
   });
 
-  // Use the custom theme hook
   const { currentThemeName, setTheme } = useTheme();
 
-  // Use the custom chat hook, passing necessary props
   const { messages, inputValue, isLoading, setInputValue, handleSubmit, clearMessages } = useChat({
     isAuthenticated,
     setIsAuthenticated,
@@ -32,23 +29,21 @@ const App: React.FC = () => {
   };
 
   const handleLoginSuccess = () => {
-    if (!DISABLE_AUTH) { // Only set isAuthenticated if auth is enabled
+    if (!DISABLE_AUTH) { 
       setIsAuthenticated(true);
     }
-    clearMessages(); // Clear messages on successful login
+    clearMessages(); 
   };
 
   const handleLogout = () => {
     localStorage.removeItem('jwtToken');
-    if (!DISABLE_AUTH) { // Only set isAuthenticated if auth is enabled
+    if (!DISABLE_AUTH) { 
       setIsAuthenticated(false);
     }
-    clearMessages(); // Clear messages on logout
+    clearMessages(); 
   };
 
-  // Create a proper render function that doesn't use hooks directly
   const renderMessageContent = (message: Message) => {
-    // MessageContent expects { text: string }, so we pass the 'text' property
     return <MessageContent message={{ text: message.text }} />;
   };
 
@@ -65,9 +60,9 @@ const App: React.FC = () => {
           handleSubmit={handleSubmit}
           formatTime={formatTime}
           renderMessageContent={renderMessageContent}
-          currentThemeName={currentThemeName} // Pass current theme name
-          setTheme={setTheme} // Pass set theme function
-          onLogout={handleLogout} // Pass logout function
+          currentThemeName={currentThemeName} 
+          setTheme={setTheme} 
+          onLogout={handleLogout} 
         />
       )}
     </div>

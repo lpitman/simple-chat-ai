@@ -1,8 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import './ChatContainer.css';
-import SettingsModal from './SettingsModal'; // Import the new SettingsModal
+import SettingsModal from './SettingsModal'; 
 
-// Update the Message interface to match the one in src/App.tsx
 interface Message {
   id: number;
   text: string;
@@ -26,7 +25,7 @@ const ChatContainer: React.FC<{
   renderMessageContent: (message: Message) => React.ReactNode;
   currentThemeName: string;
   setTheme: (themeName: string) => void;
-  onLogout: () => void; // New prop for logout
+  onLogout: () => void; 
 }> = ({ 
   messages, 
   inputValue, 
@@ -37,7 +36,7 @@ const ChatContainer: React.FC<{
   renderMessageContent,
   currentThemeName,
   setTheme,
-  onLogout // Destructure new prop
+  onLogout 
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false); // State for modal visibility
