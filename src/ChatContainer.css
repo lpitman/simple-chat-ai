@@ -258,7 +258,7 @@
 
 /* New rule for the SVG component */
 .settings-button .settings-icon {
-  color: red; /* Temporarily set to red for diagnosis */
+  fill: var(--header-text-color); /* Temporarily set to red for diagnosis */
 }
 
 .settings-button:hover .settings-icon { /* Apply hover to the icon itself */
