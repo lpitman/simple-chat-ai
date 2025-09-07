@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import './ChatContainer.css';
 import SettingsModal from './SettingsModal'; 
+import GearIcon from '/public/gear.svg?react'; // Import SVG as a React component
 
 interface Message {
   id: number;
@@ -39,7 +40,7 @@ const ChatContainer: React.FC<{
   onLogout 
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null); // Create a ref for the input field
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false); // State for modal visibility
 
   const scrollToBottom = () => {
@@ -63,7 +64,7 @@ const ChatContainer: React.FC<{
         <h1>AI Chat</h1>
         <p>Powered by Ollama Qwen3</p>
         <button className="settings-button" onClick={() => setIsSettingsModalOpen(true)}>
-          <img src="/gear.svg" alt="Settings" width="24" height="24" />
+          <GearIcon className="settings-icon" width="24" height="24" /> {/* Use the imported component */}
         </button>
         <button className="logout-button" onClick={onLogout}>
           Logout

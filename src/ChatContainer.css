@@ -249,7 +249,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--header-text-color); /* Use header text color for the icon */
+  /* color: var(--header-text-color); This is now handled by .settings-button .settings-icon */
   padding: 0; /* Remove default button padding */
   display: flex; /* To center the SVG */
   align-items: center;
@@ -257,11 +257,16 @@
   transition: color 0.3s ease;
 }
 
-.settings-button:hover {
+/* New rule for the SVG component */
+.settings-button .settings-icon {
+  color: var(--header-text-color); /* This will set the fill color for the SVG */
+}
+
+.settings-button:hover .settings-icon { /* Apply hover to the icon itself */
   color: rgba(255, 255, 255, 0.8); /* Slightly dim on hover */
 }
 
-.settings-button svg {
+.settings-button svg { /* This rule is now less specific than .settings-button .settings-icon */
   width: 24px;
   height: 24px;
 }
