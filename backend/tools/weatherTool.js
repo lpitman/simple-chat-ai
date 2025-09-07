@@ -74,7 +74,6 @@ async function get_current_weather(args) {
         }
 
         const { latitude, longitude, name, country: foundCountry, admin1, admin2 } = geoResponse.data.results[0];
-        // Construct a more complete location name for the output
         const fullLocationName = `${name}${admin1 ? `, ${admin1}` : ''}${admin2 ? `, ${admin2}` : ''}, ${foundCountry}`;
 
         // 2. Fetch weather data from Open-Meteo Forecast API
@@ -125,7 +124,6 @@ async function get_current_weather(args) {
     }
 }
 
-// Define the tool for Ollama in the required format
 const weatherToolDefinition = {
     type: 'function',
     function: {
