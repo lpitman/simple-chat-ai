@@ -1,8 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import './ChatContainer.css';
 import SettingsModal from './SettingsModal'; 
-import GearIcon from '/public/gear.svg?react'; // Import SVG as a React component
-
+import GearIcon from './assets/gear.svg?react';
 interface Message {
   id: number;
   text: string;
