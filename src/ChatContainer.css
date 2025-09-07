@@ -249,7 +249,6 @@
   background: none;
   border: none;
   cursor: pointer;
-  /* color: var(--header-text-color); This is now handled by .settings-button .settings-icon */
   padding: 0; /* Remove default button padding */
   display: flex; /* To center the SVG */
   align-items: center;
@@ -259,7 +258,7 @@
 
 /* New rule for the SVG component */
 .settings-button .settings-icon {
-  color: var(--header-text-color); /* This will set the fill color for the SVG */
+  color: red; /* Temporarily set to red for diagnosis */
 }
 
 .settings-button:hover .settings-icon { /* Apply hover to the icon itself */
