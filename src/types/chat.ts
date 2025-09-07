@@ -1,9 +1,8 @@
-// src/types/chat.ts
 export interface Message {
-  id: number; // Unique ID for React keys (for UI rendering)
-  text: string; // The text content to display in the UI
-  sender: 'user' | 'ai'; // For UI styling (user/ai bubble)
-  timestamp: Date; // For UI display
+  id: number; 
+  text: string; 
+  sender: 'user' | 'ai'; 
+  timestamp: Date; 
 
   // Properties for Ollama API (role and content are always present for Ollama)
   role: 'user' | 'assistant' | 'tool';

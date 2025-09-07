@@ -1,4 +1,3 @@
-// src/hooks/useChat.ts
 import { useState } from 'react';
 import type { Message } from '../types/chat';
 
@@ -54,11 +53,11 @@ export const useChat = ({ isAuthenticated, setIsAuthenticated, disableAuth }: Us
     // Prepare the user message for display and for sending to Ollama
     const newUserMessage: Message = {
       id: Date.now(),
-      text: currentPrompt, // Use currentPrompt
+      text: currentPrompt, 
       sender: 'user',
       timestamp: new Date(),
-      role: 'user', // Ollama role
-      content: currentPrompt, // Ollama content
+      role: 'user', 
+      content: currentPrompt, 
     };
 
     // Update messages state with the new user message immediately
@@ -78,7 +77,6 @@ export const useChat = ({ isAuthenticated, setIsAuthenticated, disableAuth }: Us
         if (msg.tool_call_id) ollamaMsg.tool_call_id = msg.tool_call_id;
         return ollamaMsg;
       });
-      // Add the current user message to the history for Ollama
       messagesForOllama.push({ role: newUserMessage.role, content: newUserMessage.content });
 
       const headers: HeadersInit = {
@@ -88,13 +86,11 @@ export const useChat = ({ isAuthenticated, setIsAuthenticated, disableAuth }: Us
         headers['Authorization'] = `Bearer ${token}`;
       }
 
-      // Send request to the new backend endpoint /api/chat
-      const response = await fetch(`${backendBaseUrl}/api/chat`, { // Changed URL to /api/chat
+      const response = await fetch(`${backendBaseUrl}/api/chat`, { 
         method: 'POST',
         headers: headers,
         body: JSON.stringify({
-          messages: messagesForOllama, // Send the full message history
-          // model and stream are now handled by the backend
+          messages: messagesForOllama, 
         })
       });
 
@@ -105,7 +101,7 @@ export const useChat = ({ isAuthenticated, setIsAuthenticated, disableAuth }: Us
         localStorage.setItem('savedPrompt', currentPrompt);
         setIsAuthenticated(false);
         console.error('Authentication failed. Please log in again.');
-        return; // Stop further processing
+        return; 
       }
 
       if (!response.ok) {
@@ -118,12 +114,12 @@ export const useChat = ({ isAuthenticated, setIsAuthenticated, disableAuth }: Us
       // Add AI message (or tool call message if the backend were to pass it through)
       const aiMessage: Message = {
         id: Date.now() + 1,
-        text: data.content || '', // Ollama response has 'content'
+        text: data.content || '', 
         sender: 'ai',
         timestamp: new Date(),
         role: data.role,
         content: data.content || '',
-        tool_calls: data.tool_calls, // Capture tool calls if any (though backend handles execution)
+        tool_calls: data.tool_calls, 
       };
 
       setMessages(prev => [...prev, aiMessage]);

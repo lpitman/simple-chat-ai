@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const db = require('../db'); // Import the database connection
+const db = require('../db'); 
 const path = require('path');
 
 // Load environment variables from .env file
@@ -43,7 +43,7 @@ router.post('/login', (req, res) => {
         if (!JWT_SECRET) {
             return res.status(500).json({ error: 'Server misconfiguration: JWT secret not set.' });
         }
-        const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' }); // Token expires in 1 hour
+        const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' }); 
         res.json({ token });
     });
 });

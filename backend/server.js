@@ -1,11 +1,10 @@
 const express = require('express');
 const cors = require('cors');
-const { Ollama } = require('ollama'); // Import Ollama client
-const chatRouter = require('./routes/chat'); // Import the chat router
-const authRouter = require('./routes/auth'); // Import the new auth router
-const authenticateToken = require('./middleware/auth'); // Import the new auth middleware
-const rateLimit = require('./middleware/rateLimit'); // Import the new rate limit middleware
-const db = require('./db'); // Import the database connection (to ensure it initializes)
+const { Ollama } = require('ollama'); 
+const chatRouter = require('./routes/chat'); 
+const authRouter = require('./routes/auth'); 
+const authenticateToken = require('./middleware/auth'); 
+const rateLimit = require('./middleware/rateLimit');
 const path = require('path');
 
 // Load environment variables from .env file
@@ -33,7 +32,7 @@ app.use('/api/auth', authRouter);
 // Mount the chat router
 // Conditionally apply the authentication and rate limiting middleware
 if (DISABLE_AUTH) {
-    app.use('/api/chat', chatRouter(ollama)); // No authentication or rate limiting middleware
+    app.use('/api/chat', chatRouter(ollama)); 
 } else {
     // Apply authentication first, then rate limiting, then the chat router
     app.use('/api/chat', authenticateToken, rateLimit, chatRouter(ollama));

@@ -1,13 +1,13 @@
 const express = require('express');
 const { search_wikipedia, wikipediaToolDefinition } = require('../tools/wikipediaTool');
 const { get_current_weather, weatherToolDefinition } = require('../tools/weatherTool');
-const { search_mtg_card, mtgToolDefinition } = require('../tools/mtgTool'); // Import the new MTG tool
+const { search_mtg_card, mtgToolDefinition } = require('../tools/mtgTool'); 
 
 // Map tool names to their corresponding functions
 const availableFunctions = {
     search_wikipedia: search_wikipedia,
     get_current_weather: get_current_weather,
-    search_mtg_card: search_mtg_card, // Add the new MTG tool function
+    search_mtg_card: search_mtg_card, 
 };
 
 // Export a function that takes the ollama client as an argument
@@ -24,10 +24,10 @@ module.exports = (ollamaClient) => {
             }
 
             // 1. Initial call to Ollama with the current message history and available tools
-            const response = await ollamaClient.chat({ // Use the passed ollamaClient
+            const response = await ollamaClient.chat({ 
                 model: model,
                 messages: messages,
-                tools: [wikipediaToolDefinition, weatherToolDefinition, mtgToolDefinition], // Provide all tools to Ollama
+                tools: [wikipediaToolDefinition, weatherToolDefinition, mtgToolDefinition], 
             });
 
             const responseMessage = response.message;
@@ -71,7 +71,7 @@ module.exports = (ollamaClient) => {
                     messages: messagesWithToolCall,
                 });
 
-                return res.json(finalResponse.message); // Return Ollama's final message
+                return res.json(finalResponse.message); 
             }
 
             // If no tool call was requested, just return Ollama's initial response

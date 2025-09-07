@@ -26,7 +26,7 @@ async function search_mtg_card(args) {
             output += `Mana Cost: ${card.mana_cost}\n`;
         }
         output += `Type: ${card.type_line}\n`;
-        output += `Rarity: ${card.rarity.charAt(0).toUpperCase() + card.rarity.slice(1)}\n`; // Capitalize rarity
+        output += `Rarity: ${card.rarity.charAt(0).toUpperCase() + card.rarity.slice(1)}\n`; 
         if (card.power && card.toughness) {
             output += `Power/Toughness: ${card.power}/${card.toughness}\n`;
         }
@@ -48,10 +48,7 @@ async function search_mtg_card(args) {
             if (card.prices.usd_foil) {
                 output += `Price (USD Foil, TCGPlayer): $${card.prices.usd_foil}\n`;
             }
-            // You can add other prices if desired, e.g., EUR from Cardmarket
-            // if (card.prices.eur) {
-            //     output += `Price (EUR, Cardmarket): €${card.prices.eur}\n`;
-            // }
+            
         }
 
         // Include the image URL if available (using 'normal' size)

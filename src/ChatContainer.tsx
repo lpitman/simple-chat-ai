@@ -39,7 +39,7 @@ const ChatContainer: React.FC<{
   onLogout 
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null); // Create a ref for the input field
+  const inputRef = useRef<HTMLInputElement>(null);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false); // State for modal visibility
 
   const scrollToBottom = () => {

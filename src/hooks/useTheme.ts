@@ -1,6 +1,5 @@
-// src/hooks/useTheme.ts
 import { useState, useEffect } from 'react';
-import { themes } from '../themes'; // Assuming themes.ts is in src/
+import { themes } from '../themes'; 
 
 // Define ThemeColors type based on the structure of a theme in the 'themes' object
 type ThemeColors = typeof themes['light'];
